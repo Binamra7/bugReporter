@@ -1,0 +1,67 @@
+h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container {
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  background-color: aquamarine;
+  padding: 3rem;
+}
+.bug__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: turquoise;
+  padding: 3rem;
+  /* cursor: pointer; */
+}
+
+.bug__info {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid black;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.bug__info .urgency {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  text-transform: uppercase;
+  padding: 0;
+  margin: 0;
+  justify-content: left;
+  align-items: left;
+}
+.bug__info .title {
+  color: white;
+  position: absolute;
+  top: 0;
+  font-weight: 600;
+  font-size: 28px;
+}
+.bug__info .description {
+  color: rgb(179, 192, 192);
+  position: inherit;
+  margin-top: 3rem;
+  font-weight: 100;
+  font-style: italic;
+}
+.bug__info .title,
+.description {
+  text-emphasis: none;
+  text-transform: capitalize;
+  text-decoration: none;
+}
+
+h2 {
+  background-color: transparent;
+}
