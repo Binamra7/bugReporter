@@ -6,6 +6,27 @@
   margin: 0;
   padding: 0;
 }
+
+::-webkit-scrollbar {
+  transition: all 0.3s ease-in-out;
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #000000;
+  border-radius: 1rem;
+  transition: all 0.3s ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(78, 78, 78);
+  transition: all 0.3s ease-in-out;
+}
+
 /* 
 h1 {
   font-weight: 600;

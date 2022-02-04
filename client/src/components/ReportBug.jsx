@@ -1,8 +1,16 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./reportBug.css";
 
 function ReportBug() {
+  // useEffect(() => {
+  // return () => {
+  console.log("unmounting");
+
+  // };
+  // });
+
   const valid = () => {
     if (
       bugTitle.trim().length > 0 &&
@@ -86,14 +94,42 @@ function ReportBug() {
       console.log(bug);
       setBugDescription("");
       setBugTitle("");
+      axios.post("http://localhost:5000/bug/add", bug).then((res) => {
+        console.log(res);
+      });
     }
   };
 
   return (
     <div className="report_bug">
       <form onSubmit={handleSubmit}>
-        <h1>Report a bug</h1>
+        <h1 style={{ justifyContent: "left" }}>Report a bug</h1>
 
+        {/*bug title and its description*/}
+        <label className="bug__explanation">
+          Bug Title:
+          <br />
+          <input
+            style={!isValid ? { borderColor: "red" } : { borderColor: "black" }}
+            value={bugTitle}
+            type="text"
+            name="bugName"
+            className="bug__title"
+            onChange={handleTitleChange}
+          />
+        </label>
+        <label className="bug__explanation">
+          Bug Description:
+          <br />
+          <input
+            style={!isValid ? { borderColor: "red" } : { borderColor: "black" }}
+            value={bugDescription}
+            type="text"
+            name="bugDescription"
+            className="bug__desc"
+            onChange={handleDescriptionChange}
+          />
+        </label>
         {/*bug severity*/}
         <div className="radio__container">
           <h2>How severe is it?</h2>
@@ -134,32 +170,6 @@ function ReportBug() {
           </label>
           <br />
         </div>
-
-        {/*bug title and its description*/}
-        <label className="bug__explanation">
-          Bug Title:
-          <br />
-          <input
-            style={!isValid ? { borderColor: "red" } : { borderColor: "black" }}
-            value={bugTitle}
-            type="text"
-            name="bugName"
-            className="bug__title"
-            onChange={handleTitleChange}
-          />
-        </label>
-        <label className="bug__explanation">
-          Bug Description:
-          <br />
-          <input
-            style={!isValid ? { borderColor: "red" } : { borderColor: "black" }}
-            value={bugDescription}
-            type="text"
-            name="bugDescription"
-            className="bug__desc"
-            onChange={handleDescriptionChange}
-          />
-        </label>
         {/* <Link to="/submitted"> */}
         <button
           // disabled={!isValid}
