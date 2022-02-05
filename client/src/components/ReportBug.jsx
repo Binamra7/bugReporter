@@ -1,6 +1,6 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+// import { Link } from "react-router-dom";
 import "./reportBug.css";
 
 function ReportBug() {
@@ -11,15 +11,15 @@ function ReportBug() {
   // };
   // });
 
-  const valid = () => {
-    if (
-      bugTitle.trim().length > 0 &&
-      bugDescription.trim().length > 0 &&
-      severity.trim().length > 0
-    ) {
-      setIsValid(true);
-    } else setIsValid(false);
-  };
+  // const valid = () => {
+  //   if (
+  //     bugTitle.trim().length > 0 &&
+  //     bugDescription.trim().length > 0 &&
+  //     severity.trim().length > 0
+  //   ) {
+  //     setIsValid(true);
+  //   } else setIsValid(false);
+  // };
 
   const [bug, setBug] = useState({
     bugSeverity: "",
@@ -94,9 +94,10 @@ function ReportBug() {
       console.log(bug);
       setBugDescription("");
       setBugTitle("");
-      axios.post("http://localhost:5000/bug/add", bug).then((res) => {
-        console.log(res);
-      });
+      axios.post("http://localhost:5000/bug/add", bug);
+      // .then((res) => {
+      // console.log(res);
+      // });
     }
   };
 

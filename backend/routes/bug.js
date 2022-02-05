@@ -11,12 +11,14 @@ router.route('/add').post((req, res) => {
   const bugTitle = req.body.bugTitle;
   const bugDescription = req.body.bugDescription;
   const bugSeverity = req.body.bugSeverity;
+  const bugResolved = false;
   const date = Date.parse(req.body.date);
 
   const newBugReport = new Bug({
     bugTitle,
     bugDescription,
     bugSeverity,
+    bugResolved,
     date,
   });
 
@@ -37,20 +39,19 @@ router.route('/:id').delete((req, res) => {
     .catch(err => res.status(400).json('Error: ' + err));
 });
 
-// router.route('/update/:id').post((req, res) => {
-//   Exercise.findById(req.params.id)
-//     .then(exercise => {
-//       exercise.username = req.body.username;
-//       exercise.description = req.body.description;
-//       exercise.duration = Number(req.body.duration);
-//       exercise.date = Date.parse(req.body.date);
-
-//       exercise.save()
-//         .then(() => res.json('Exercise updated!'))
-//         .catch(err => res.status(400).json('Error: ' + err));
-//     })
-//     .catch(err => res.status(400).json('Error: ' + err));
-// });
+router.route('/update/:id').put((req, res) => {
+  Bug.findById(req.params.id)
+    .then(Bug => {
+      Bug.bugTitle = req.body.bugTitle;
+      Bug.bugDescription = req.body.bugDescription;
+      Bug.bugSeverity = req.body.bugSeverity;
+      Bug.bugResolved = req.body.bugResolved;
+      Bug.save()
+        .then(() => res.json('Bug updated!'))
+        .catch(err => res.status(400).json('Error: ' + err));
+    })
+    .catch(err => res.status(400).json('Error: ' + err));
+});
 
 
 module.exports = router;

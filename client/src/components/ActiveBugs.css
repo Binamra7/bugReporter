@@ -1,0 +1,84 @@
+.sort__button {
+  font-weight: 400;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(to right, yellow, red);
+  color: white;
+  text-decoration: white;
+  height: 3rem;
+  width: 30%;
+  border: none;
+  padding: 1rem 1rem;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+  z-index: 999;
+  margin-bottom: 2rem;
+}
+.sort__button:hover {
+  background-color: rebeccapurple;
+  color: rgb(0, 0, 0);
+  box-shadow: 5px 5px 20px 5px rgb(95, 98, 99);
+}
+.sort__button::after {
+  content: "";
+}
+
+/*
+.bug__info {
+  background-color: rgb(232, 239, 240);
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid black;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  border: none;
+  box-shadow: 8px 8px 15px 5px #87898b;
+}
+.bug__info .urgency {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  text-transform: uppercase;
+  padding: 0;
+  margin: 0;
+  justify-content: left;
+  align-items: left;
+}
+.bug__info .title {
+  color: rgb(0, 0, 0);
+  position: absolute;
+  top: 0;
+  font-weight: 600;
+  font-size: 28px;
+}
+.bug__info .description {
+  color: rgb(37, 37, 37);
+  position: inherit;
+  margin-top: 3rem;
+  font-weight: 100;
+  font-style: italic;
+}
+.bug__info .title,
+.description {
+  text-emphasis: none;
+  text-transform: capitalize;
+  text-decoration: none;
+}
+h1,
+h2 {
+  background-color: transparent;
+}
+h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+} */

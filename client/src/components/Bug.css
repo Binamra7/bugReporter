@@ -1,0 +1,85 @@
+.bug__info {
+  display: flex;
+  flex-direction: row;
+  width: 80%;
+  height: 10rem;
+  padding: 0.5rem;
+  background-color: rgb(255, 0, 0);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  border: none;
+  box-shadow: 8px 8px 15px 5px #87898b;
+}
+
+.bug__info__left {
+  border-radius: 1rem 0 0 1rem;
+  display: flex;
+  padding: 0 1rem;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 25%;
+  text-transform: capitalize;
+  background-color: yellow;
+}
+.bug__info__right {
+  padding: none;
+  display: flex;
+  text-transform: capitalize;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 60%;
+  background-color: rgb(43, 255, 0);
+}
+.bug__info__buttons {
+  width: 15%;
+  border-radius: 0 1rem 1rem 0;
+  z-index: 999;
+  background-color: violet;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: column;
+  text-transform: uppercase;
+}
+.bug__info__buttons__resolved,
+.bug__info__buttons__delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  align-content: space-between;
+  flex-direction: column;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  border: none;
+}
+.RiDeleteBinLine,
+.BsBoxArrowUpRight {
+  height: 2rem;
+  width: 2rem;
+  transition: ease-in-out 0.4s all;
+}
+
+.bug__info__buttons__resolved:hover {
+  color: blue;
+  transition: all ease-in-out 0.4s;
+  transform: scale(1.1);
+}
+
+.bug__info__buttons__delete:hover {
+  color: red;
+  transition: all ease-in-out 0.4s;
+  transform: scale(1.1);
+}
+
+h1,
+h2,
+h3,
+p {
+  background-color: transparent;
+  margin: 0;
+}
