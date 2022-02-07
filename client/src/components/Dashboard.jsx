@@ -32,7 +32,6 @@ function Dashboard() {
         bugResolved: true,
       })
       .then((res) => {
-        console.log(res.data);
         setBugs({
           active: bugs.active.filter((b) => b._id !== bug._id),
           resolved: [...bugs.resolved, bug],
@@ -42,7 +41,6 @@ function Dashboard() {
 
   const onDeleteBug = (bug) => {
     axios.delete(`http://localhost:5000/bug/${bug._id}`).then((res) => {
-      console.log(res.data);
       setBugs({
         active: bugs.active.filter((b) => b._id !== bug._id),
         resolved: bugs.resolved.filter((b) => b._id !== bug._id),

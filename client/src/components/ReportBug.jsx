@@ -56,18 +56,13 @@ function ReportBug() {
       )
     ) {
       setIsValid(false);
-      console.log("Invalid entry");
       alert("Please fill all the fields properly");
     } else {
       setIsValid(true);
-      console.log(bug);
       setBugDescription("");
       setBugTitle("");
       setModal(true);
       axios.post("http://localhost:5000/bug/add", bug);
-      // .then((res) => {
-      // console.log(res);
-      // });
     }
   };
 
@@ -120,7 +115,6 @@ function ReportBug() {
               type="radio"
               name="severity"
               value="high"
-              // checked={check}
             />
             High
           </label>
@@ -132,7 +126,6 @@ function ReportBug() {
               type="radio"
               name="severity"
               value="medium"
-              // checked={check}
             />
             Medium
           </label>
@@ -144,7 +137,6 @@ function ReportBug() {
               type="radio"
               name="severity"
               value="low"
-              // checked={check}
             />
             Low
           </label>

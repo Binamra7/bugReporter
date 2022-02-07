@@ -62,7 +62,6 @@
 .BsBoxArrowUpRight {
   height: 2rem;
   width: 2rem;
-  /* transition: ease-in-out 0.2s all; */
 }
 
 .bug__info__buttons__resolved:hover {

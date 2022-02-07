@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./Modal.css";
 
 function Modal(props) {
@@ -41,11 +41,7 @@ function Modal(props) {
               </>
             )}
             {props.submit && (
-              <button
-                value="bugSubmit"
-                onClick={() => props.show(false)}
-                // onClick={window.location.reload(false)}
-              >
+              <button value="bugSubmit" onClick={() => props.show(false)}>
                 OK
               </button>
             )}

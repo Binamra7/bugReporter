@@ -15,7 +15,6 @@
   width: 100%;
   height: 50px;
   background-color: #b3ff0000;
-  /* border-bottom: 1px solid #e0e0e0; */
 }
 .active {
   background-color: #d61c16;
@@ -34,19 +33,12 @@
   padding: 1rem;
   border-radius: 10px 10px 0 0;
   width: 20%;
-  /* position: relative;
-  z-index: 9999; */
 }
 
 .active:hover,
 .resolved:hover {
   cursor: pointer;
 }
-
-/* .active:focus,
-.resolved:focus {
-  opacity: 80%;
-} */
 .resolved:focus {
   background-color: rgb(92, 233, 79);
 }

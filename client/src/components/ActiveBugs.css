@@ -4,7 +4,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* background-image: linear-gradient(to right, yellow, red); */
   background-color: rgb(154, 205, 221);
   color: rgb(0, 0, 0);
   height: 3rem;

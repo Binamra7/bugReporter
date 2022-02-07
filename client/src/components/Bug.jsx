@@ -11,11 +11,9 @@ function Bug(props) {
 
   const handleResolveClick = (bug) => {
     props.handleResolveRequest(bug);
-    console.log(bug);
   };
 
   const handleDeleteClick = (bug) => {
-    console.log("delete", bug);
     setModal(true);
     setSelectedBug(bug);
   };
@@ -27,7 +25,6 @@ function Bug(props) {
 
   useEffect(() => {
     if (delete1 === "true") {
-      console.log("delete confirmed");
       handleDelete();
     }
   }, [delete1]);
@@ -40,7 +37,14 @@ function Bug(props) {
 
   return (
     <>
-      {modal && <Modal heading='Are you sure you want to delete this bug?' show={setModal} del={setDelete1} bug={selectedBug} />}
+      {modal && (
+        <Modal
+          heading="Are you sure you want to delete this bug?"
+          show={setModal}
+          del={setDelete1}
+          bug={selectedBug}
+        />
+      )}
       <div className="bug__info" key={props.bugInfo._id}>
         <div
           className="bug__info__left"
