@@ -3,8 +3,7 @@
 }
 
 .report_bug {
-  margin: 0;
-  padding: 0;
+  margin: 2rem;
 }
 
 h1 {
@@ -14,6 +13,9 @@ h1 {
 h2 {
   font-weight: 400;
   font-size: 2rem;
+}
+.radio__container {
+  margin-top: 1rem;
 }
 
 .radio__container label {
@@ -37,7 +39,7 @@ form {
 form .bug__title,
 .bug__desc {
   height: 40px;
-  width: 80%;
+  width: 50%;
   padding-left: 1rem;
   border: none;
   border: 1px solid #121619;
@@ -46,15 +48,18 @@ form .bug__title,
   font-size: 1.2rem;
   font-weight: 400;
 }
+.bug__desc {
+  height: 7rem;
+}
 
-form textarea {
+/* form textarea {
   margin-top: 15px;
   height: 70px;
   width: 80%;
   border: none;
   border-bottom: 1px solid #121619;
   color: black;
-}
+} */
 form input::placeholder,
 textarea::placeholder {
   font-weight: bold;

@@ -14,35 +14,35 @@ function ActiveBugs(props) {
 
   const handleClick = (e) => {
     if (sort === "Severity") {
-      setSort("Date Submitted");
+      setSort("Date Resolved");
       setBugs((prevState) =>
         prevState.sort((a, b) => {
           if (a.bugSeverity === b.bugSeverity) {
             return 0;
           } else if (a.bugSeverity === "high") {
-            return 1;
+            return -1;
           } else if (b.bugSeverity === "high") {
-            return -1;
+            return 1;
           } else if (a.bugSeverity === "medium") {
-            return 1;
+            return -1;
           } else if (b.bugSeverity === "medium") {
-            return -1;
-          } else if (a.bugSeverity === "low") {
             return 1;
-          } else if (b.bugSeverity === "low") {
+          } else if (a.bugSeverity === "low") {
             return -1;
+          } else if (b.bugSeverity === "low") {
+            return 1;
           }
           return 0;
         })
       );
     }
-    if (sort === "Date Submitted") {
+    if (sort === "Date Resolved") {
       setSort("Severity");
       setBugs((prevState) =>
         prevState.sort((a, b) => {
-          if (a.createdAt < b.createdAt) {
+          if (a.updatedAt < b.updatedAt) {
             return -1;
-          } else if (b.createdAt < a.createdAt) {
+          } else if (b.updatedAt < a.updatedAt) {
             return 1;
           }
           return 0;
@@ -51,9 +51,14 @@ function ActiveBugs(props) {
     }
   };
 
+  const onDeleteBug = (bug) => {
+    console.log("This is the bug", bug);
+    props.onDeleteFromResolved(bug);
+  };
+
   return (
     <>
-      <h1>{bugs.length} resolved bugs</h1>
+      <h1 style={{ marginTop: "1rem" }}>{bugs.length} resolved bugs</h1>
       <button className="sort__button" onClick={handleClick}>
         Sort by {sort}
       </button>
@@ -61,9 +66,16 @@ function ActiveBugs(props) {
         <h1>No resolved bugs to display.</h1>
       ) : (
         bugs
-          .slice(0)
-          .reverse()
-          .map((bug, index) => <Bug bugInfo={bug} key={bug._id} i={index} />)
+          // .slice(0)
+          // .reverse()
+          .map((bug, index) => (
+            <Bug
+              bugInfo={bug}
+              key={bug._id}
+              i={index}
+              handleDeleteRequest={onDeleteBug}
+            />
+          ))
       )}
     </>
   );

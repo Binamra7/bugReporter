@@ -1,40 +1,23 @@
 import axios from "axios";
 import React, { useState } from "react";
-// import { Link } from "react-router-dom";
+import Modal from "./modal/Modal";
 import "./reportBug.css";
 
 function ReportBug() {
-  // useEffect(() => {
-  // return () => {
-  console.log("unmounting");
-
-  // };
-  // });
-
-  // const valid = () => {
-  //   if (
-  //     bugTitle.trim().length > 0 &&
-  //     bugDescription.trim().length > 0 &&
-  //     severity.trim().length > 0
-  //   ) {
-  //     setIsValid(true);
-  //   } else setIsValid(false);
-  // };
-
   const [bug, setBug] = useState({
     bugSeverity: "",
     bugTitle: "",
     bugDescription: "",
   });
 
-  //   const [test, setTest] = useState(1);
+  const [modal, setModal] = useState(false);
   const [isValid, setIsValid] = useState(true);
   const [severity, setSeverity] = useState("");
   const [bugTitle, setBugTitle] = useState("");
   const [bugDescription, setBugDescription] = useState("");
+  const [check, setCheck] = useState(false);
 
   const handleTitleChange = (e) => {
-    // console.log(e.target.value);
     setBugTitle(e.target.value);
     setBug((prevBug) => ({
       bugTitle: e.target.value,
@@ -54,30 +37,16 @@ function ReportBug() {
   };
 
   const handleRadioChange = (e) => {
+    setCheck(true);
     setBug((prevBug) => ({
       bugTitle: prevBug.bugTitle,
       bugDescription: prevBug.bugDescription,
       bugSeverity: e.target.value,
     }));
     setSeverity(e.target.value);
-    // console.log(severity, typeof severity);
   };
 
   const handleSubmit = (e) => {
-    // e.preventDefault();
-    // if (isValid) {
-    //   console.log("Invalid entry");
-    //   alert("Please fill all the fields properly");
-    // } else {
-    //   //   setIsValid(true);
-    //   console.log(bug);
-    //   setBugDescription("");
-    //   setBugTitle("");
-    // }
-
-    // console.log("submit");
-    // console.log(e);
-
     e.preventDefault();
     if (
       !(
@@ -94,6 +63,7 @@ function ReportBug() {
       console.log(bug);
       setBugDescription("");
       setBugTitle("");
+      setModal(true);
       axios.post("http://localhost:5000/bug/add", bug);
       // .then((res) => {
       // console.log(res);
@@ -103,8 +73,17 @@ function ReportBug() {
 
   return (
     <div className="report_bug">
+      {modal && (
+        <Modal
+          heading="Bug Submitted Successfully!"
+          show={setModal}
+          submit={true}
+        />
+      )}
       <form onSubmit={handleSubmit}>
-        <h1 style={{ justifyContent: "left" }}>Report a bug</h1>
+        <h1 style={{ justifyContent: "left", marginBottom: "2rem" }}>
+          Report a bug
+        </h1>
 
         {/*bug title and its description*/}
         <label className="bug__explanation">
@@ -122,7 +101,7 @@ function ReportBug() {
         <label className="bug__explanation">
           Bug Description:
           <br />
-          <input
+          <textarea
             style={!isValid ? { borderColor: "red" } : { borderColor: "black" }}
             value={bugDescription}
             type="text"
@@ -137,11 +116,11 @@ function ReportBug() {
           <label style={{ color: "#e50000" }}>
             <input
               onChange={handleRadioChange}
-              //   checked={!severity.trim().length === 0}
               className="urgency__input"
               type="radio"
               name="severity"
               value="high"
+              // checked={check}
             />
             High
           </label>
@@ -149,11 +128,11 @@ function ReportBug() {
           <label style={{ color: "#b55809" }}>
             <input
               onChange={handleRadioChange}
-              // //   checked={!severity.trim().length === 0}
               className="urgency__input"
               type="radio"
               name="severity"
               value="medium"
+              // checked={check}
             />
             Medium
           </label>
@@ -161,26 +140,23 @@ function ReportBug() {
           <label style={{ color: "#848d03" }}>
             <input
               onChange={handleRadioChange}
-              //   checked={!severity.trim().length === 0}
               className="urgency__input"
               type="radio"
               name="severity"
               value="low"
+              // checked={check}
             />
             Low
           </label>
           <br />
         </div>
-        {/* <Link to="/submitted"> */}
         <button
-          // disabled={!isValid}
           style={
             !isValid ? { backgroundColor: "red" } : { backgroundColor: "black" }
           }
         >
           Submit
         </button>
-        {/* </Link> */}
       </form>
     </div>
   );

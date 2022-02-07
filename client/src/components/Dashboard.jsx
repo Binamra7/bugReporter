@@ -15,7 +15,7 @@ function Dashboard() {
       //add those bugs which have bugResolved value of false to active and
       // others to resolved
       setBugs({
-        active: res.data.filter((bug) => bug.bugResolved !== true),
+        active: res.data.filter((bug) => bug.bugResolved == false),
         resolved: res.data.filter((bug) => bug.bugResolved === true),
       });
     });
@@ -24,7 +24,6 @@ function Dashboard() {
   const [status, setStatus] = useState("active");
 
   const onResolvedRequest = (bug) => {
-    console.log("This is the bug from dashboard", bug);
     axios
       .put(`http://localhost:5000/bug/update/${bug._id}`, {
         bugTitle: bug.bugTitle,
@@ -41,30 +40,72 @@ function Dashboard() {
       });
   };
 
+  const onDeleteBug = (bug) => {
+    axios.delete(`http://localhost:5000/bug/${bug._id}`).then((res) => {
+      console.log(res.data);
+      setBugs({
+        active: bugs.active.filter((b) => b._id !== bug._id),
+        resolved: bugs.resolved.filter((b) => b._id !== bug._id),
+      });
+    });
+  };
+
   return (
     <div className="dashboard">
-      <h1>Welcome to dashboard</h1>
+      <h1 style={{ margin: "2rem 0" }}>Welcome to dashboard</h1>
       <div className="dashboard__navbar">
         <button
-          style={status === "active" ? { opacity: "1" } : {}}
+          style={
+            status === "active"
+              ? {
+                  backgroundColor: "#ffbfbf",
+                  color: "black",
+                  border: "none",
+                }
+              : { border: "none" }
+          }
           onClick={() => setStatus("active")}
           className="active"
         >
           Active Bugs ({bugs.active.length})
         </button>
         <button
-          style={status === "resolved" ? { opacity: "1" } : {}}
+          style={
+            status === "resolved"
+              ? {
+                  backgroundColor: "rgb(157 225 143)",
+                  color: "black",
+                  border: "none",
+                }
+              : { border: "none" }
+          }
           onClick={() => setStatus("resolved")}
           className="resolved"
         >
           Resolved Bugs ({bugs.resolved.length})
         </button>
       </div>
-      <div className="bug__container">
+      <div
+        className="bug__container"
+        style={
+          status === "resolved"
+            ? {
+                backgroundColor: "rgb(157 225 143)",
+              }
+            : { border: "none" }
+        }
+      >
         {status === "active" ? (
-          <ActiveBugs bugs={bugs.active} onUpdateBugs={onResolvedRequest} />
+          <ActiveBugs
+            bugs={bugs.active}
+            onUpdateBugs={onResolvedRequest}
+            onDeleteFromActive={onDeleteBug}
+          />
         ) : (
-          <ResolvedBugs bugs={bugs.resolved} />
+          <ResolvedBugs
+            bugs={bugs.resolved}
+            onDeleteFromResolved={onDeleteBug}
+          />
         )}
       </div>
     </div>

@@ -1,16 +1,17 @@
 .bug__info {
+  border-radius: 1rem;
   display: flex;
   flex-direction: row;
   width: 80%;
   height: 10rem;
   padding: 0.5rem;
-  background-color: rgb(255, 0, 0);
+  background-color: rgb(216 240 238);
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease-in-out;
   cursor: pointer;
   margin-bottom: 2rem;
   border: none;
-  box-shadow: 8px 8px 15px 5px #87898b;
+  box-shadow: 8px 8px 15px 5px #8e8e91;
 }
 
 .bug__info__left {
@@ -19,10 +20,10 @@
   padding: 0 1rem;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-start;
+  justify-content: center;
   width: 25%;
   text-transform: capitalize;
-  background-color: yellow;
+  background-color: rgb(216 240 238);
 }
 .bug__info__right {
   padding: none;
@@ -30,15 +31,15 @@
   text-transform: capitalize;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-start;
-  width: 60%;
-  background-color: rgb(43, 255, 0);
+  justify-content: center;
+  width: 55%;
+  background-color: rgb(216 240 238);
 }
 .bug__info__buttons {
-  width: 15%;
+  width: 20%;
   border-radius: 0 1rem 1rem 0;
-  z-index: 999;
-  background-color: violet;
+  z-index: 1;
+  background-color: rgb(216 240 238);
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -53,7 +54,7 @@
   width: 100%;
   align-content: space-between;
   flex-direction: column;
-  background-color: rgb(255, 255, 255);
+  background-color: rgba(216, 240, 238, 0);
   color: rgb(0, 0, 0);
   border: none;
 }
@@ -61,18 +62,21 @@
 .BsBoxArrowUpRight {
   height: 2rem;
   width: 2rem;
-  transition: ease-in-out 0.4s all;
+  /* transition: ease-in-out 0.2s all; */
 }
 
 .bug__info__buttons__resolved:hover {
   color: blue;
-  transition: all ease-in-out 0.4s;
+  transition: all ease-in-out 0.2s;
   transform: scale(1.1);
+}
+.bug__info__buttons__delete {
+  color: rgb(230, 51, 51);
 }
 
 .bug__info__buttons__delete:hover {
-  color: red;
-  transition: all ease-in-out 0.4s;
+  color: rgb(243, 34, 34);
+  transition: all ease-in-out 0.2s;
   transform: scale(1.1);
 }
 

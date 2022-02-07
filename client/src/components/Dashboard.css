@@ -5,7 +5,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  background-color: #b700ff;
+  background-color: #ebe5ee;
 }
 .dashboard__navbar {
   display: flex;
@@ -14,40 +14,44 @@
   justify-content: space-evenly;
   width: 100%;
   height: 50px;
-  background-color: #b3ff00;
-  border-bottom: 1px solid #e0e0e0;
+  background-color: #b3ff0000;
+  /* border-bottom: 1px solid #e0e0e0; */
 }
 .active {
-  background-color: #e20e0e;
+  background-color: #d61c16;
 }
 .resolved {
-  background-color: #26e600;
+  background-color: #21c500;
 }
 
 .active,
 .resolved {
   transition: ease-in-out 0.2s;
   font-size: 20px;
+  opacity: 100%;
   font-weight: lighter;
-  opacity: 70%;
   color: white;
   padding: 1rem;
-  border: none;
   border-radius: 10px 10px 0 0;
+  width: 20%;
+  /* position: relative;
+  z-index: 9999; */
 }
 
 .active:hover,
 .resolved:hover {
-  opacity: 100%;
   cursor: pointer;
 }
 
-.active:focus,
+/* .active:focus,
 .resolved:focus {
-  opacity: 100%;
+  opacity: 80%;
+} */
+.resolved:focus {
+  background-color: rgb(92, 233, 79);
 }
-.resolved:target {
-  opacity: 100%;
+.active:focus {
+  background-color: #ffbfbf;
 }
 
 .bug__container {
@@ -57,5 +61,8 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  background-color: #1100ff;
+  background-color: #ffbfbf;
+  position: inherit;
+  z-index: 999;
+  top: 0;
 }

@@ -1,48 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Bug.css";
 import { BsBoxArrowUpRight } from "react-icons/bs";
 import { RiDeleteBinLine } from "react-icons/ri";
 import Modal from "./modal/Modal";
 
 function Bug(props) {
+  const [modal, setModal] = useState(false);
+  const [delete1, setDelete1] = useState("");
+  const [selectedBug, setSelectedBug] = useState({});
+
   const handleResolveClick = (bug) => {
     props.handleResolveRequest(bug);
     console.log(bug);
   };
 
-  const handleDelete = (bug) => {
-    // props.handleDeleteRequest(bug);
+  const handleDeleteClick = (bug) => {
     console.log("delete", bug);
+    setModal(true);
+    setSelectedBug(bug);
+  };
 
-    setQuery(!query);
+  const handleDelete = () => {
+    setModal(false);
+    props.handleDeleteRequest(selectedBug);
   };
-  const handleQuery = (props) => {
-    // handleDelete(props);
-    setQuery(!query);
-    console.log("handle query props", props);
-    if (props === "delete") {
-      setDelete1(true);
-    } else setDelete1(false);
-  };
-  const handleClick = (props) => {
-    console.log("from bugs", props);
-    setQuery(!query);
-    if (delete1) {
-      console.log(props, "ready to be deleted");
+
+  useEffect(() => {
+    if (delete1 === "true") {
+      console.log("delete confirmed");
+      handleDelete();
     }
-  };
+  }, [delete1]);
 
-  const [query, setQuery] = useState(false);
-  const [delete1, setDelete1] = useState(false);
+  if (modal) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "scroll";
+  }
 
   return (
     <>
-      {query && <Modal onShow={handleQuery} />}
+      {modal && <Modal heading='Are you sure you want to delete this bug?' show={setModal} del={setDelete1} bug={selectedBug} />}
       <div className="bug__info" key={props.bugInfo._id}>
-        <div className="bug__info__left">
-          <h1>
-            {props.i + 1}. {props.bugInfo.bugSeverity}
-          </h1>
+        <div
+          className="bug__info__left"
+          style={
+            props.bugInfo.bugResolved
+              ? { borderLeft: "1rem solid green" }
+              : props.bugInfo.bugSeverity === "high"
+              ? { borderLeft: "1rem solid red" }
+              : props.bugInfo.bugSeverity === "medium"
+              ? { borderLeft: "1rem solid #f16b05" }
+              : { borderLeft: "1rem solid #d5c013" }
+          }
+        >
+          {props.i + 1}.<h1>{props.bugInfo.bugSeverity}</h1>
           <p>
             Reported Date:{" "}
             {props.bugInfo.createdAt === undefined
@@ -66,19 +78,21 @@ function Bug(props) {
           <h3>{props.bugInfo.bugDescription}</h3>
         </div>
         <div className="bug__info__buttons">
-          <div
-            className="bug__info__buttons__resolved"
-            onClick={() => handleResolveClick(props.bugInfo)}
-          >
-            <BsBoxArrowUpRight className="BsBoxArrowUpRight" />
-            <p>
-              Send to
-              {props.bugInfo.bugResolved !== true ? " Resolved" : " Active"}
-            </p>
-          </div>
+          {!props.bugInfo.bugResolved && (
+            <div
+              className="bug__info__buttons__resolved"
+              onClick={() => handleResolveClick(props.bugInfo)}
+            >
+              <BsBoxArrowUpRight className="BsBoxArrowUpRight" />
+              <p>
+                Send to
+                {props.bugInfo.bugResolved !== true ? " Resolved" : " Active"}
+              </p>
+            </div>
+          )}
           <div
             className="bug__info__buttons__delete"
-            onClick={() => handleClick(props.bugInfo)}
+            onClick={() => handleDeleteClick(props.bugInfo)}
           >
             <RiDeleteBinLine className="RiDeleteBinLine" />
             <p>Delete</p>

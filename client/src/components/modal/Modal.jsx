@@ -2,33 +2,53 @@ import React, { useState } from "react";
 import "./Modal.css";
 
 function Modal(props) {
-  //   const [modal, setModal] = useState(true);
-  //   const toggle = () => setModal(!modal);
-
-  const handleYes = (e) => {
-    const ans = e.target.value;
-    props.onShow(ans);
-    console.log("Delete");
-    console.log(ans);
-  };
-
-  const handleNo = (e) => {
-    props.onShow(e.target.value);
-    console.log("No");
+  const toggle = (e) => {
+    props.del(e.target.value);
+    props.show(false);
   };
 
   return (
     <>
-      <div className="overlay">
-        <div className="modal">
-          <h2>Are you sure you want to delete this bug?</h2>
+      <div className="modal">
+        <div className="overlay" onClick={() => props.show(false)}></div>
+        <div className="modal__content">
+          <h2>{props.heading}</h2>
+          {!props.submit && (
+            <div className="delete__bug__info">
+              <span>
+                <h3>Title: </h3>
+                {props.bug.bugTitle}
+              </span>
+              <span>
+                <h3>Description: </h3>
+                {props.bug.bugDescription}
+              </span>
+              <span>
+                <h3>Severity: </h3>
+                {props.bug.bugSeverity}
+              </span>
+            </div>
+          )}
           <div className="modal__buttons">
-            <button className="yes" value="delete" onClick={handleYes}>
-              Yes
-            </button>
-            <button className="no" value="dont delete" onClick={handleNo}>
-              No
-            </button>
+            {!props.submit && (
+              <>
+                <button className="yes" value="true" onClick={toggle}>
+                  Yes
+                </button>
+                <button className="no" value="false" onClick={toggle}>
+                  No
+                </button>
+              </>
+            )}
+            {props.submit && (
+              <button
+                value="bugSubmit"
+                onClick={() => props.show(false)}
+                // onClick={window.location.reload(false)}
+              >
+                OK
+              </button>
+            )}
           </div>
         </div>
       </div>
