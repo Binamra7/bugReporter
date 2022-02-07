@@ -18,15 +18,7 @@ connection.once('open', () => {
     console.log("Connection has been made")
 });
 
-// const userRouter = require('./routes/users');
-// const exerciseRouter = require('./routes/exercises');
-// app.use('/users', userRouter);
-// app.use('/exercises', exerciseRouter);
-
 const bugRouter = require('./routes/bug');
 app.use('/bug', bugRouter);
-
-
-
 
 app.listen(port,()=>{ console.log(`Server started on ${port}`)});
