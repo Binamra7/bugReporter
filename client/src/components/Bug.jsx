@@ -55,22 +55,26 @@ function Bug(props) {
               ? { borderLeft: "1rem solid red" }
               : props.bugInfo.bugSeverity === "medium"
               ? { borderLeft: "1rem solid #f16b05" }
-              : { borderLeft: "1rem solid #d5c013" }
+              : { borderLeft: "1rem solid #ffff2d" }
           }
         >
-          {props.i + 1}.<h1>{props.bugInfo.bugSeverity}</h1>
+          <h1 className="index">
+            {props.i + 1}. {props.bugInfo.bugSeverity}
+          </h1>
+
           <p>
-            Reported Date:{" "}
+            <div className="make__bold">Reported Date:&nbsp;</div>
             {props.bugInfo.createdAt === undefined
               ? ""
               : props.bugInfo.createdAt.substr(0, 10)}
           </p>
           <p>
-            Status: {props.bugInfo.bugResolved === true ? "Resolved" : "Active"}
+            <div className="make__bold">Status:&nbsp;</div>
+            {props.bugInfo.bugResolved === true ? "Resolved" : "Active"}
           </p>
           {props.bugInfo.bugResolved && (
             <p>
-              Resolved Date:{" "}
+              <div className="make__bold">Resolved Date: &nbsp;</div>
               {props.bugInfo.updatedAt === undefined
                 ? ""
                 : props.bugInfo.updatedAt.substr(0, 10)}
@@ -78,11 +82,28 @@ function Bug(props) {
           )}
         </div>
         <div className="bug__info__right">
-          <h1>{props.bugInfo.bugTitle}</h1>
-          <h3>{props.bugInfo.bugDescription}</h3>
+          <h1 style={{ fontSize: "20px", fontWeight: "bold" }}>
+            {props.bugInfo.bugTitle}
+          </h1>
+          <h2 style={{ fontSize: "16px" }}>{props.bugInfo.bugDescription}</h2>
         </div>
         <div className="bug__info__buttons">
           {!props.bugInfo.bugResolved && (
+            <button
+              className="bug__info__buttons__resolved"
+              onClick={() => handleResolveClick(props.bugInfo)}
+            >
+              Send to
+              {props.bugInfo.bugResolved !== true ? " Resolved" : " Active"}
+            </button>
+          )}
+          <button
+            className="bug__info__buttons__delete"
+            onClick={() => handleDeleteClick(props.bugInfo)}
+          >
+            Delete
+          </button>
+          {/* {!props.bugInfo.bugResolved && (
             <div
               className="bug__info__buttons__resolved"
               onClick={() => handleResolveClick(props.bugInfo)}
@@ -93,14 +114,14 @@ function Bug(props) {
                 {props.bugInfo.bugResolved !== true ? " Resolved" : " Active"}
               </p>
             </div>
-          )}
-          <div
+          )} */}
+          {/* <div
             className="bug__info__buttons__delete"
             onClick={() => handleDeleteClick(props.bugInfo)}
           >
             <RiDeleteBinLine className="RiDeleteBinLine" />
             <p>Delete</p>
-          </div>
+          </div> */}
         </div>
       </div>
     </>

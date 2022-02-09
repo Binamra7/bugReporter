@@ -85,6 +85,7 @@ function ReportBug() {
           Bug Title:
           <br />
           <input
+          autoComplete="off"
             style={!isValid ? { borderColor: "red" } : { borderColor: "black" }}
             value={bugTitle}
             type="text"
@@ -97,6 +98,7 @@ function ReportBug() {
           Bug Description:
           <br />
           <textarea
+            autoComplete="off"
             style={!isValid ? { borderColor: "red" } : { borderColor: "black" }}
             value={bugDescription}
             type="text"
