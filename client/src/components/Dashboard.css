@@ -8,6 +8,7 @@
   background-color: #ebe5ee;
   margin: 0;
 }
+
 .dashboard__navbar {
   display: flex;
   flex-direction: row;
@@ -17,9 +18,11 @@
   height: 50px;
   background-color: #b3ff0000;
 }
+
 .active {
   background-color: #d61c16;
 }
+
 .resolved {
   background-color: #21c500;
 }
@@ -40,9 +43,11 @@
 .resolved:hover {
   cursor: pointer;
 }
+
 .resolved:focus {
   background-color: rgb(92, 233, 79);
 }
+
 .active:focus {
   background-color: #ffbfbf;
 }

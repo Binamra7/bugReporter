@@ -10,6 +10,7 @@ h1 {
   font-weight: 600;
   font-size: 2.5rem;
 }
+
 h2 {
   font-weight: 400;
   font-size: 2rem;
@@ -48,6 +49,7 @@ form .bug__title,
   font-size: 1.2rem;
   font-weight: 400;
 }
+
 .bug__desc {
   height: 7rem;
 }
@@ -58,9 +60,11 @@ textarea::placeholder {
   color: rgb(90, 90, 90);
   font-family: Arial, Helvetica, sans-serif;
 }
+
 form textarea {
   padding: 0.5rem;
 }
+
 form input:focus,
 textarea:focus {
   outline: none;
@@ -83,6 +87,7 @@ form button {
   font-size: 15px;
   cursor: pointer;
 }
+
 form button:hover {
   box-shadow: 8px 8px 20px 10px rgb(185, 190, 189);
 }

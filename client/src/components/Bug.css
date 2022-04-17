@@ -13,6 +13,7 @@
   border: none;
   box-shadow: 3px 3px 5px 3px #4c4c4e9c;
 }
+
 .bug__info h1 {
   font-size: 1.5rem;
   font-weight: 400;
@@ -31,6 +32,7 @@
   text-transform: capitalize;
   background-color: rgb(216 240 238);
 }
+
 .bug__info__right {
   padding: none;
   padding: 0.3rem 0;
@@ -42,9 +44,11 @@
   width: 60%;
   background-color: rgb(216 240 238);
 }
+
 .bug__info__right h1 {
   font-size: 3rem;
 }
+
 .bug__info__buttons {
   width: 20%;
   border-radius: 0 1rem 1rem 0;
@@ -56,6 +60,7 @@
   flex-direction: column;
   text-transform: uppercase;
 }
+
 .bug__info__buttons__resolved,
 .bug__info__buttons__delete {
   display: flex;
@@ -72,6 +77,7 @@
   font-size: 14px;
   font-weight: bold;
 }
+
 .bug__info__buttons__resolved {
   background-color: rgb(156, 215, 235);
   color: black;
@@ -83,6 +89,7 @@
   /* transform: scale(1.1); */
   background-color: rgb(77, 200, 241);
 }
+
 .bug__info__buttons__delete {
   background-color: rgb(241, 62, 62);
   color: white;
@@ -95,6 +102,7 @@
   /* transform: scale(1.1); */
   background-color: rgb(240, 24, 24);
 }
+
 .index {
   display: flex;
   justify-content: center;
@@ -104,6 +112,7 @@
 .make__bold {
   font-weight: bold;
 }
+
 p {
   font-size: 0.8rem;
   display: flex;
