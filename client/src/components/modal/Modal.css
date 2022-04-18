@@ -28,6 +28,7 @@
   max-width: 80%;
   min-width: 60%;
 }
+
 .delete__bug__info {
   margin-top: 2rem;
   text-transform: capitalize;
@@ -54,6 +55,7 @@
   text-transform: uppercase;
   margin: 3rem;
 }
+
 .modal__buttons button {
   margin-bottom: 3rem;
   width: 100%;
@@ -65,10 +67,12 @@
   border-radius: 1rem;
   font-size: 1.5rem;
 }
+
 .modal__buttons .yes {
   background-color: red;
   color: white;
 }
+
 .modal__buttons button:hover {
   box-shadow: 5px 5px 15px 5px rgb(148, 143, 143);
 }
