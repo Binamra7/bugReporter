@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import Modal from "./modal/Modal";
 import "./reportBug.css";
+import { Link } from "react-router-dom";
 
 function ReportBug() {
 	const [bug, setBug] = useState({
@@ -152,6 +153,9 @@ function ReportBug() {
 					Submit
 				</button>
 			</form>
+			<Link to="/dashboard">
+				<h1>For test purposes only: Click here to see admin dashboard</h1>
+			</Link>
 		</div>
 	);
 }
