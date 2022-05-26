@@ -1,0 +1,16 @@
+bug description should be a text area---done
+add auto complele off-----due
+reset the severity readio button ----due
+how users choose the severity of the bug---due
+send to resolved icon change----due
+users and ticket manager can chat to further discuss the bug/issue--due
+url section where the bug was located---due
+feature to add screenchot---due
+no modal after submission---due
+turn off suggestion for input tags---due
+lower font size in cards and overall---due
+minify the bug container---due
+software version where the bug was found in ---due
+
+// to give notification
+https://mantine.dev/others/notifications/
