@@ -16,8 +16,12 @@ export default async function SignInPage({ searchParams }: PageProps<'/sign-in'>
 
     let configError: ConfigError | null = null;
     let guestAccess = false;
+    let isGuest = false;
     try {
-        if (await getViewer()) redirect(returnTo);
+        const viewer = await getViewer();
+        // Guests stay here so they can sign in as a maintainer; only maintainers skip the form.
+        if (viewer === 'maintainer') redirect(returnTo);
+        isGuest = viewer === 'guest';
         guestAccess = getAuthConfig().guestAccess;
     } catch (error) {
         if (!(error instanceof ConfigError)) throw error;
@@ -45,8 +49,8 @@ export default async function SignInPage({ searchParams }: PageProps<'/sign-in'>
                 <ConfigNotice error={configError} area="Maintainer sign-in" />
             ) : (
                 <>
-                    <SignInForm returnTo={returnTo} />
-                    {guestAccess && <GuestEntry returnTo={returnTo} />}
+                    <SignInForm returnTo={returnTo} browsingAsGuest={isGuest} />
+                    {guestAccess && !isGuest && <GuestEntry returnTo={returnTo} />}
                 </>
             )}
         </SplitPage>

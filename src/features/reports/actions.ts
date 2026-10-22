@@ -1,7 +1,7 @@
 'use server';
 
 import { ConfigError } from '@/lib/env';
-import { isLimited, LIMITS, record } from '@/lib/rate-limit';
+import { consume, LIMITS } from '@/lib/rate-limit';
 import { createReport } from './repository';
 import { FORM_FIELDS, HONEYPOT_FIELD, type FormValues, type SubmitState } from './submit-state';
 import { parseNewReport } from './validation';
@@ -26,18 +26,20 @@ export async function submitReport(_previous: SubmitState, formData: FormData): 
     const parsed = parseNewReport(formData);
     if (!parsed.ok) return { status: 'invalid', errors: parsed.errors, values };
 
+    const usage = await consume('report');
+    if (usage.limited) {
+        return {
+            status: 'failed',
+            message: `This network has sent ${LIMITS.report.max} reports in the last hour. Please try again later.`,
+            values,
+        };
+    }
+
     try {
-        if (await isLimited('report')) {
-            return {
-                status: 'failed',
-                message: `This network has sent ${LIMITS.report.max} reports in the last hour. Please try again later.`,
-                values,
-            };
-        }
         const report = await createReport(parsed.data);
-        await record('report');
         return { status: 'received', reference: report.reference, title: report.title, severity: report.severity };
     } catch (error) {
+        await usage.refund();
         if (error instanceof ConfigError) {
             console.error(`Report submission is unavailable: ${error.message}`);
             return {

@@ -4,7 +4,7 @@ import { useActionState } from 'react';
 import { signIn, type SignInState } from './actions';
 import styles from './SignInForm.module.css';
 
-export function SignInForm({ returnTo }: { returnTo: string }) {
+export function SignInForm({ returnTo, browsingAsGuest }: { returnTo: string; browsingAsGuest: boolean }) {
     const [state, formAction, pending] = useActionState<SignInState, FormData>(signIn, { error: null, attempt: 0 });
 
     return (
@@ -17,6 +17,9 @@ export function SignInForm({ returnTo }: { returnTo: string }) {
             <h2 id="sign-in-form-heading" className={styles.heading}>
                 Maintainer sign-in
             </h2>
+            {browsingAsGuest && (
+                <p className={styles.note}>You’re browsing as a guest. Sign in to resolve or delete reports.</p>
+            )}
             <input type="hidden" name="next" value={returnTo} />
             <div className="field">
                 <label htmlFor="password" className="field-label">

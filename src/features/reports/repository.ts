@@ -111,7 +111,7 @@ export async function listReports(query: QueueQuery): Promise<{ reports: QueueIt
 
     const collection = await bugs();
     const docsPromise = collection
-        .aggregate<BugDocument>([
+        .aggregate<BugDocument & { cut: boolean }>([
             { $match: match },
             {
                 $addFields: {
@@ -131,16 +131,21 @@ export async function listReports(query: QueueQuery): Promise<{ reports: QueueIt
             { $sort: { ...SORT_STAGES[query.sort], _id: -1 } },
             { $limit: QUEUE_LIMIT },
             // Rows show two lines of the description; don't ship up to 5,000 characters per row.
-            { $addFields: { bugDescription: { $substrCP: ['$bugDescription', 0, EXCERPT_LENGTH] } } },
+            {
+                $addFields: {
+                    bugDescription: { $substrCP: ['$bugDescription', 0, EXCERPT_LENGTH] },
+                    cut: { $gt: [{ $strLenCP: '$bugDescription' }, EXCERPT_LENGTH] },
+                },
+            },
         ])
         .toArray();
     const [docs, matched] = await Promise.all([docsPromise, collection.countDocuments(match)]);
 
-    const reports = docs.flatMap(doc => {
+    const reports = docs.flatMap(({ cut, ...doc }) => {
         const report = toReport(doc);
         if (!report) return [];
         const { description: excerpt, ...rest } = report;
-        return [{ ...rest, excerpt: excerpt.length < EXCERPT_LENGTH ? excerpt : `${excerpt.trimEnd()}…` }];
+        return [{ ...rest, excerpt: cut ? `${excerpt.trimEnd()}…` : excerpt }];
     });
     return { reports, matched };
 }
