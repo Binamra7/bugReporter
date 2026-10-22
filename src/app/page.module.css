@@ -1,0 +1,94 @@
+.page {
+    display: grid;
+    min-height: 100dvh;
+}
+
+/* The field: the only place on this page with orange, and only field-ink printed on it. */
+.tag {
+    display: grid;
+    align-content: start;
+    gap: var(--s-6);
+    padding: var(--s-5) var(--gutter) var(--s-7);
+    background: var(--field);
+    color: var(--field-ink);
+}
+
+.intro {
+    display: grid;
+    gap: var(--s-4);
+    padding-top: var(--s-6);
+}
+
+.display {
+    font-size: var(--fs-display);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.035em;
+}
+
+.lead {
+    max-width: 34ch;
+    font-size: var(--fs-20);
+    line-height: 1.4;
+}
+
+.advice {
+    display: grid;
+    gap: var(--s-2);
+    padding-top: var(--s-4);
+    border-top: var(--rule-w) solid var(--field-ink);
+}
+
+.advice h2 {
+    font-size: var(--fs-17);
+}
+
+.advice ul {
+    display: grid;
+    gap: var(--s-1);
+    padding-left: 1.1em;
+}
+
+.maintainer a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-weight: 600;
+}
+
+.main {
+    width: 100%;
+    max-width: 44rem;
+    padding: var(--s-7) var(--gutter) var(--s-9);
+}
+
+@media (min-width: 60rem) {
+    .page {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .tag {
+        grid-column: 1 / span 5;
+        position: sticky;
+        top: 0;
+        height: 100dvh;
+        grid-template-rows: auto auto auto 1fr;
+        padding-top: var(--s-6);
+        padding-bottom: var(--s-6);
+    }
+
+    .intro {
+        padding-top: var(--s-8);
+    }
+
+    .maintainer {
+        align-self: end;
+    }
+
+    .main {
+        grid-column: 7 / span 6;
+        padding-top: var(--s-9);
+        padding-right: var(--gutter);
+        padding-left: 0;
+    }
+}
