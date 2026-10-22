@@ -6,7 +6,7 @@
 
 **Report a bug in a few fields. Triage it by severity.**
 
-A public bug report form and a maintainer queue, built on Next.js 16 and MongoDB.<br />
+A public bug report form and a maintainer queue, built on Next.js 16 and MongoDB, deployed on Vercel.<br />
 Designed as a printed defect tag: one signal-orange field, black ink, and a three-cell severity scale.
 
 ![Next.js 16](https://img.shields.io/badge/Next.js-16_LTS-0e0a07?style=flat-square&labelColor=ff8547)
@@ -14,9 +14,9 @@ Designed as a printed defect tag: one signal-orange field, black ink, and a thre
 ![MongoDB](https://img.shields.io/badge/MongoDB-7_driver-0e0a07?style=flat-square&labelColor=ff8547)
 ![Vercel](https://img.shields.io/badge/deploy-Vercel-0e0a07?style=flat-square&labelColor=ff8547)
 
-[Getting started](#getting-started) · [How it works](#how-it-works) · [Design](DESIGN.md) · [Architecture](docs/architecture.md)
+**[Live demo](https://bug-reporter-virid.vercel.app)** · [Getting started](#getting-started) · [How it works](#how-it-works) · [Design](DESIGN.md) · [Architecture](docs/architecture.md)
 
-<img src="docs/screenshots/report.png" alt="The report form: a signal-orange column reading “Found a bug?” beside the form on off-white paper" />
+<img src="docs/screenshots/queue.png" alt="The triage queue: 31 open reports listed highest severity first, each with a three-cell severity scale, title, excerpt, reference and date" />
 
 </div>
 
@@ -32,28 +32,34 @@ Severity is the one thing that matters in triage, so it has one consistent drawi
 ![high](https://img.shields.io/badge/high-A3140B-A3140B?style=for-the-badge)
 ![resolved](https://img.shields.io/badge/resolved-14532D-14532D?style=for-the-badge)
 
+## Try it
+
+The [live demo](https://bug-reporter-virid.vercel.app) runs on Vercel with a MongoDB Atlas database holding 46 sample reports for a fictional invoicing app.
+
+- **Report a bug** on the home page. Your report joins the queue straight away.
+- **Look around the queue** from [`/triage`](https://bug-reporter-virid.vercel.app/triage): choose **Look around as a guest** for read-only access to every report, with search, filters and sorting.
+- Resolving and deleting need the maintainer password, which isn't published.
+
 ## Screenshots
 
 <table>
   <tr>
-    <td><img src="docs/screenshots/queue.png" alt="Triage queue sorted by severity" /><br /><sub>The queue: open reports by severity, with search and filters</sub></td>
-    <td><img src="docs/screenshots/detail.png" alt="A report's detail page" /><br /><sub>A report: description, details, resolve and delete</sub></td>
+    <td width="50%"><img src="docs/screenshots/report.png" alt="The report form beside the orange “Found a bug?” column" /><br /><sub><b>Report form.</b> Each severity level is explained before you choose it.</sub></td>
+    <td width="50%"><img src="docs/screenshots/validation.png" alt="The report form with an error summary and inline errors" /><br /><sub><b>Validation.</b> A focused summary links to each field; nothing typed is lost.</sub></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/received.png" alt="Confirmation after sending a report" /><br /><sub>After sending: the reference to keep</sub></td>
-    <td><img src="docs/screenshots/report.png" alt="The report form" /><br /><sub>The report form</sub></td>
+    <td><img src="docs/screenshots/received.png" alt="Report received, with reference BR-… in large type" /><br /><sub><b>Received.</b> The reporter gets a reference straight away.</sub></td>
+    <td><img src="docs/screenshots/search.png" alt="The queue filtered to medium-severity reports matching “invoice”" /><br /><sub><b>Search and filters.</b> “7 of 31 open reports match”, and the view lives in the URL.</sub></td>
   </tr>
-</table>
-
-<table>
   <tr>
-    <td width="33%"><img src="docs/screenshots/phone-report.png" alt="Report form on a phone" /></td>
-    <td width="33%"><img src="docs/screenshots/phone-queue.png" alt="Queue on a phone" /></td>
-    <td width="33%"><img src="docs/screenshots/phone-detail.png" alt="Report detail on a phone" /></td>
+    <td><img src="docs/screenshots/detail.png" alt="A high-severity report with its description and details" /><br /><sub><b>Report detail.</b> The description, page, version and dates, plus resolve and delete.</sub></td>
+    <td><img src="docs/screenshots/delete-dialog.png" alt="A confirmation dialog asking whether to delete the report permanently" /><br /><sub><b>Delete confirmation.</b> Focus starts on “Keep report”; resolving is suggested instead.</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/sign-in.png" alt="Maintainer sign-in with a “Look around as a guest” option" /><br /><sub><b>Sign-in.</b> Maintainers use the password; visitors can browse as a read-only guest.</sub></td>
+    <td valign="top"><sub>Captured 22 October 2026 from the production deployment. The layouts also adapt to tablets and phones; the end-to-end suite checks phone widths for sideways scrolling and tap-target size.</sub></td>
   </tr>
 </table>
-
-<sub>Captured 22 October 2026 from a production build, using demo reports for a fictional shop.</sub>
 
 ## Features
 
@@ -70,10 +76,12 @@ Severity is the one thing that matters in triage, so it has one consistent drawi
 - Search across titles and descriptions; filter by severity; sort by severity, age or resolution date. Filters live in the URL, so a view can be bookmarked.
 - Mark resolved, reopen, or delete after a confirmation dialog.
 - Signed in with a shared maintainer password; sessions are signed cookies.
+- Optional read-only guest access (`GUEST_ACCESS=on`) so a public demo can be explored without risk.
 
 **Operations**
 
 - Reads the original app's MongoDB data as is: same collection, same fields.
+- Failed sign-ins and report submissions are rate-limited per network, with counters kept in MongoDB.
 - Missing configuration and database outages produce clear messages, not blank pages.
 - Builds with no secrets; designed for Vercel's serverless runtime.
 
@@ -99,7 +107,7 @@ SESSION_SECRET=output-of-openssl-rand-base64-32
 Open http://localhost:3000 to report and http://localhost:3000/triage to triage.
 
 > [!NOTE]
-> Triage uses one shared password, and nothing rate-limits sign-in or submissions. That suits a small team; see [Limitations](docs/architecture.md#limitations) before exposing it widely.
+> Triage uses one shared maintainer password. That suits a small team; see [Limitations](docs/architecture.md#limitations) before relying on it for more.
 
 <details>
 <summary>Scripts</summary>
@@ -124,12 +132,12 @@ Import the repository, keep the detected Next.js settings, and set `MONGODB_URI`
 
 ## How it works
 
-| Route          | Who         | What                                                       |
-| -------------- | ----------- | ---------------------------------------------------------- |
-| `/`            | Anyone      | Report form (static page; submits through a server action) |
-| `/sign-in`     | Maintainers | Password sign-in                                           |
-| `/triage`      | Maintainers | Queue with tabs, search, severity filter and sort          |
-| `/triage/[id]` | Maintainers | One report: resolve, reopen, delete                        |
+| Route          | Who                 | What                                                       |
+| -------------- | ------------------- | ---------------------------------------------------------- |
+| `/`            | Anyone              | Report form (static page; submits through a server action) |
+| `/sign-in`     | Anyone              | Maintainer password sign-in, or read-only guest entry      |
+| `/triage`      | Maintainers, guests | Queue with tabs, search, severity filter and sort          |
+| `/triage/[id]` | Maintainers, guests | One report; only maintainers can resolve, reopen or delete |
 
 ```
 src/
@@ -152,10 +160,14 @@ Architecture, data model and trade-offs: [docs/architecture.md](docs/architectur
 ## Testing
 
 ```bash
-npm test
+npm test          # 81 unit and integration tests (Vitest)
+npm run db:up && npm run test:e2e   # 45 end-to-end scenarios (Playwright)
 ```
 
-Covers validation, queue URL parsing, session tokens and redirects, the repository against a real `mongod` (including legacy documents), authorization of the triage actions, and the report form's error and confirmation states.
+- **Unit and integration:** validation, queue URL parsing, session tokens and roles, redirect safety, rate-limit grouping, the repository against a real `mongod` (including legacy documents), authorization of every triage action, and the report form's states.
+- **End to end:** runs against a production build and a real MongoDB. It covers reporting (including keyboard-only use), sign-in and redirects, guest access, search, filters and sorting, resolve, reopen and delete, rate limits, axe accessibility scans (WCAG 2.2 AA) and phone layouts.
+
+CI runs both on every push.
 
 ## Acknowledgements
 
