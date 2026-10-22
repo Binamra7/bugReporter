@@ -4,7 +4,7 @@
 }
 
 /* The field: the only place on this page with orange, and only field-ink printed on it. */
-.tag {
+.field {
     display: grid;
     align-content: start;
     gap: var(--s-6);
@@ -49,10 +49,18 @@
     padding-left: 1.1em;
 }
 
-.maintainer a {
+.footer a {
     display: inline-flex;
     align-items: center;
     gap: var(--s-2);
+    font-weight: 600;
+}
+
+.links {
+    display: grid;
+    gap: var(--s-3);
+    list-style: none;
+    font-size: var(--fs-20);
     font-weight: 600;
 }
 
@@ -67,12 +75,14 @@
         grid-template-columns: repeat(12, minmax(0, 1fr));
     }
 
-    .tag {
+    .field {
         grid-column: 1 / span 5;
         position: sticky;
         top: 0;
         height: 100dvh;
-        grid-template-rows: auto auto auto 1fr;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
         padding-top: var(--s-6);
         padding-bottom: var(--s-6);
     }
@@ -81,8 +91,8 @@
         padding-top: var(--s-8);
     }
 
-    .maintainer {
-        align-self: end;
+    .footer {
+        margin-top: auto;
     }
 
     .main {

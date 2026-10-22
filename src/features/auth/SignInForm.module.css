@@ -1,0 +1,11 @@
+.form {
+    display: grid;
+    gap: var(--s-5);
+    max-width: 26rem;
+    padding-top: var(--s-5);
+    border-top: var(--rule-w) solid var(--ink);
+}
+
+.heading {
+    font-size: var(--fs-24);
+}
