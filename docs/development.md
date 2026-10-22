@@ -9,7 +9,7 @@
 
 ```bash
 npm install
-cp .env.example .env.local      # then fill in ADMIN_PASSWORD and SESSION_SECRET
+cp .env.example .env.local      # then fill in ADMIN_PASSWORD (12+ characters) and SESSION_SECRET
 npm run db:up                   # mongo:8 in Docker on localhost:27017
 npm run db:seed                 # optional: 46 sample reports
 npm run dev                     # http://localhost:3000
@@ -55,14 +55,19 @@ Vitest runs everything under `src/**/*.test.ts(x)`.
 
 The default environment is `node`; opt a file into jsdom with the comment above. `server-only` is aliased to an empty module in `vitest.config.ts` so server modules can be imported directly.
 
-There are no browser end-to-end tests in the repository. Before shipping UI changes, run the flows by hand or with a throwaway Playwright script: submit invalid and valid reports, sign in, filter, resolve, reopen and delete.
+### End-to-end tests
+
+`npm run test:e2e` runs Playwright against a production build (`next build && next start` on port 3210) and a real MongoDB. Global setup drops and reseeds the `bug-reporter-e2e` database on `localhost:27017`, so start one first with `npm run db:up`. It refuses any non-local URI. Locally it uses your installed Chrome; CI installs Chromium.
+
+The suite covers the report form (validation, keyboard-only use, the honeypot), sign-in, redirects and cookie flags, guest access, the queue's search, filters, sorting and bookmarkable URLs, resolve/reopen/delete, rate limits, axe accessibility scans (WCAG 2.2 AA) and phone layouts. Tests share one database, so they run one at a time and create their own reports when they change data. Failures keep a trace in `test-results/`; open it with `npx playwright show-trace`.
 
 ## Deploying to Vercel
 
 1. Import the repository in Vercel. Framework detection picks Next.js; leave the build and output settings at their defaults.
-2. Create a MongoDB database. MongoDB Atlas works directly, or through the Vercel Marketplace integration, which sets `MONGODB_URI` for you. In Atlas, allow connections from Vercel (Network Access).
-3. Set `MONGODB_URI`, `ADMIN_PASSWORD` and `SESSION_SECRET` (and `MONGODB_DB` if needed) for Production and Preview.
+2. Create a MongoDB database, for example a free MongoDB Atlas M0 cluster. Vercel's IP addresses change, so in Atlas Network Access allow `0.0.0.0/0` and rely on the database user's password.
+3. Set `MONGODB_URI`, `MONGODB_DB`, `ADMIN_PASSWORD` and `SESSION_SECRET` for Production. Give Preview a **different** `MONGODB_DB` (and ideally its own password), or every pull-request preview reads and writes production reports. Set `GUEST_ACCESS=on` only if the deployment is a public demo.
 4. Deploy, then open `/triage` to confirm sign-in and the database connection.
+5. Optionally seed a demo database: `MONGODB_URI=… MONGODB_DB=… SEED_ALLOW_REMOTE=1 node scripts/seed.ts`. It replaces only documents tagged `seed: true`.
 
 To keep the original app's data, point `MONGODB_URI` at the old Atlas cluster and leave `MONGODB_DB` unset (or set it to the database the old URI named).
 

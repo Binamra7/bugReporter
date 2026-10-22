@@ -13,18 +13,19 @@ npm run db:up && npm run dev   # local MongoDB in Docker + dev server (needs .en
 npm run db:seed                # sample reports; replaces only documents tagged seed: true
 npm run check                  # format check, lint, typecheck, tests: run before every commit
 npm run build                  # production build; needs no env vars
+npm run test:e2e               # Playwright against a production build + local MongoDB (bug-reporter-e2e)
 ```
 
 ## Where things go
 
-- Routes and boundaries in `src/app/`. Keep pages thin: parse input, `requireMaintainer()`, call the repository, render.
+- Routes and boundaries in `src/app/`. Keep pages thin: parse input, `requireViewer()`, call the repository, render.
 - Report logic in `src/features/reports/`: `model.ts` (types, severity), `validation.ts` (zod), `queue.ts` (URL params), `repository.ts` (all MongoDB access), `actions.ts` / `triage-actions.ts` (server actions), `components/`.
 - Auth in `src/lib/auth/` (`token.ts` is pure; `session.ts` reads cookies). Config in `src/lib/env.ts`, the DB client in `src/lib/db.ts`.
 - Tests sit next to the code as `*.test.ts(x)`.
 
 ## Rules that aren't obvious from the code
 
-- **Every triage page and server action calls `requireMaintainer()` first.** Server actions are public POST endpoints; the layout is not a guard. `triage-actions.test.ts` checks this; extend it for new actions.
+- **Every triage page calls `requireViewer()` and every data-changing server action calls `requireMaintainer()` first.** Server actions are public POST endpoints; the layout and hidden buttons are not guards. Guests (`GUEST_ACCESS=on`) may read, never write. `triage-actions.test.ts` checks every exported action automatically.
 - **Stored field names are legacy and must not change** (`bugTitle`, `bugSeverity`, `bugResolved`, …). They keep the original app's MongoDB data readable. Only `repository.ts` knows them; everything else uses `Report`.
 - **Read configuration per request** through `src/lib/env.ts`, never at module load, so builds work without secrets. Missing config surfaces as `ConfigError` and is shown to the maintainer, not swallowed.
 - **Don't add `loading.tsx` under `/triage`.** Streaming starts before the auth check and `notFound()`, so their 307/404 responses become client-side redirects.

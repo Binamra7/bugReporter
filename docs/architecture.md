@@ -6,8 +6,8 @@ BugReporter is one Next.js 16 App Router application backed by a MongoDB collect
 
 ```
 Reporter ── / (static page, client form) ──▶ submitReport (server action) ──▶ repository ──▶ MongoDB `bugs`
-Maintainer ── /triage, /triage/[id] (dynamic server components) ──▶ requireMaintainer ──▶ repository
-            └── StatusControl / DeleteReport (client forms) ──▶ changeStatus / removeReport (server actions)
+Maintainer or guest ── /triage, /triage/[id] (dynamic server components) ──▶ requireViewer ──▶ repository
+            └── StatusControl / DeleteReport (maintainers only) ──▶ changeStatus / removeReport ──▶ requireMaintainer
 ```
 
 There is no REST API. Every mutation is a server action, and every read happens in a server component. The report page is prerendered as static HTML. The triage pages are dynamic because they read the session cookie.
@@ -47,15 +47,30 @@ Report references (`BR-3F9A1C`) are the last six hex digits of the ObjectId. The
 
 ## Authentication
 
-There is one role, "maintainer", and no user accounts. `ADMIN_PASSWORD` unlocks it, and a successful sign-in sets an `httpOnly`, `SameSite=Lax` cookie holding a signed token (`v1.<expiresAt>.<HMAC>`, valid for 7 days).
+There are no user accounts. Two roles exist:
 
-- The HMAC key is derived from both `SESSION_SECRET` and `ADMIN_PASSWORD`, so rotating either one signs every session out.
-- Passwords and signatures are compared in constant time.
-- `requireMaintainer()` runs at the top of **every** triage page **and every** triage server action. The layout isn't enough: server actions are reachable by direct POST, and layouts don't re-run on client navigation.
-- `?next=` after sign-in only accepts `/triage` paths, so it can't redirect off-site.
+- **Maintainer:** unlocked with `ADMIN_PASSWORD`. Can read and change everything.
+- **Guest:** read-only. Only offered when `GUEST_ACCESS=on`, for public demos where visitors should be able to look at the queue without being able to delete anything.
+
+Signing in sets an `httpOnly`, `SameSite=Lax` cookie holding a signed token (`v2.<role>.<expiresAt>.<HMAC>`). Maintainer sessions last 7 days, guest sessions 1 day.
+
+- The HMAC key is derived from both `SESSION_SECRET` and `ADMIN_PASSWORD`, so rotating either one signs every session out. Turning `GUEST_ACCESS` off ends guest sessions immediately.
+- Signing out deletes the cookie but doesn't revoke the token; a copied token works until it expires or a secret rotates. Revocation would need a server-side session store.
+- Passwords and signatures are compared in constant time. `ADMIN_PASSWORD` must be at least 12 characters.
+- `requireViewer()` runs at the top of every triage page; `requireMaintainer()` runs at the top of every server action that changes data. The layout isn't a guard: server actions are reachable by direct POST, and layouts don't re-run on client navigation. Hiding buttons from guests is presentation only.
+- `?next=` after sign-in is resolved as a URL first and must land on a `/triage` path on this site. A prefix check alone would accept `/triage/..//evil.example`, which normalises to a protocol-relative URL.
 - There is no `proxy.ts`. Following the Next.js guidance, checks sit next to the data instead.
 
-This suits a small team that shares one maintainer password. Per-person accounts, audit trails or roles would need a real identity provider; see Limitations.
+### Rate limits
+
+`src/lib/rate-limit.ts` keeps fixed-window counters in the `rate_limits` collection, keyed by a hash of the client address (`x-real-ip`, set by Vercel). A TTL index removes expired windows. Serverless instances share no memory, so counters can't live in the process.
+
+| Action                    | Allowance                | When exceeded                         |
+| ------------------------- | ------------------------ | ------------------------------------- |
+| Failed maintainer sign-in | 10 per 15 minutes per IP | Sign-in refuses until the window ends |
+| Report submission         | 20 per hour per IP       | The form explains and keeps the text  |
+
+If the limiter itself can't reach the database, sign-in proceeds (it doesn't need the database), and logs the error. The report form also has a honeypot field for simple bots.
 
 ## Failure handling
 
@@ -73,15 +88,16 @@ There is deliberately no `loading.tsx` under `/triage`: a streaming boundary sen
 
 ## Vercel decisions
 
-- The MongoDB client is created once per instance and cached on `globalThis`. `attachDatabasePool` from `@vercel/functions` lets Fluid compute close idle connections before an instance is suspended. It is a no-op off Vercel.
+- The MongoDB client is created once per instance and cached on `globalThis`, with a small pool (`maxPoolSize: 10`) because many instances may run at once against a shared Atlas tier. `attachDatabasePool` from `@vercel/functions` lets Fluid compute close idle connections before an instance is suspended. It is a no-op off Vercel.
 - Nothing is written to the local filesystem and no state is kept in memory between requests, apart from the connection pool.
 - No `vercel.json`: framework detection, the Node.js runtime and the default build command are correct as they are.
 
 ## Limitations
 
-- **No rate limiting.** The report form has a honeypot field, and sign-in has none. Serverless instances share no memory, so real limits need an external store (for example Upstash Redis via the Vercel Marketplace) or Vercel's firewall rules.
+- **Rate limits are per IP address.** They slow down guessing and flooding from one network; a distributed attack needs Vercel's firewall in front.
 - **No screenshots or attachments** on reports; that needs blob storage.
 - **No conversation** between reporter and maintainer, and reporters can't look up a report's status: there are no reporter accounts or contact details.
 - **One shared maintainer password.** No per-person identity or audit log.
-- **The queue renders at most 200 rows** per view and says so; search or filters narrow it. Search is a case-insensitive substring match, not full-text search.
+- **The queue renders at most 200 rows** per view and says how many matched; search or filters narrow it. Rows carry a 240-character excerpt, not the full description. Search is a case-insensitive substring match, not full-text search.
+- Documents with a severity outside high/medium/low (only possible in legacy data) are left out of rows and counts, and their detail page is a 404. Fix them in the database.
 - Dates render in UTC on the server.
