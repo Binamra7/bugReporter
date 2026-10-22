@@ -89,7 +89,7 @@ test.describe('reporting a bug', () => {
         await page.getByLabel('Title').fill(title);
         await page.getByLabel('What happened?').fill('Automated text that fills every field it can find.');
         await page.getByRole('radio', { name: /Low/ }).check();
-        await page.locator('input[name="fax_number"]').evaluate((input: HTMLInputElement) => (input.value = '555'));
+        await page.locator('input[name="br_trap_7"]').evaluate((input: HTMLInputElement) => (input.value = '555'));
         await page.getByRole('button', { name: 'Send report' }).click();
 
         await expect(page.getByText('This report couldn’t be accepted.')).toBeVisible();

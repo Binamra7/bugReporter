@@ -40,3 +40,7 @@
 .state h1 {
     font-size: var(--fs-32);
 }
+
+.role {
+    font-weight: 400;
+}

@@ -3,43 +3,73 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import { getAuthConfig } from '@/lib/env';
-import { createToken, passwordMatches, verifyToken } from './token';
+import { createToken, passwordMatches, verifyToken, type Role } from './token';
 
 const COOKIE = 'bugreporter_session';
-const SESSION_MS = 7 * 24 * 60 * 60 * 1000;
-
-/** Memoised per request. Throws ConfigError when auth isn't configured. */
-export const isMaintainer = cache(async (): Promise<boolean> => {
-    const { secret, password } = getAuthConfig();
-    const token = (await cookies()).get(COOKIE)?.value;
-    return token !== undefined && verifyToken(token, secret, password);
-});
+const SESSION_MS: Record<Role, number> = { maintainer: 7 * 24 * 60 * 60 * 1000, guest: 24 * 60 * 60 * 1000 };
 
 /**
- * Call at the top of every triage page and server action; the layout alone is not enough because server actions
- * are reachable by direct POST. `returnTo` is where sign-in sends the maintainer afterwards.
+ * Who is looking at triage: a maintainer, a read-only guest, or nobody. Memoised per request. Guest sessions stop
+ * counting the moment GUEST_ACCESS is turned off. Throws ConfigError when auth isn't configured.
  */
-export async function requireMaintainer(returnTo = '/triage'): Promise<void> {
-    let allowed = false;
+export const getViewer = cache(async (): Promise<Role | null> => {
+    const { secret, password, guestAccess } = getAuthConfig();
+    const token = (await cookies()).get(COOKIE)?.value;
+    const role = token === undefined ? null : verifyToken(token, secret, password);
+    return role === 'guest' && !guestAccess ? null : role;
+});
+
+async function viewerOrNull(): Promise<Role | null> {
     try {
-        allowed = await isMaintainer();
+        return await getViewer();
     } catch {
         // Missing auth config: the sign-in page explains which variable to set.
+        return null;
     }
-    if (!allowed) redirect(`/sign-in?next=${encodeURIComponent(returnTo)}`);
 }
 
-export async function startSession(candidate: string): Promise<boolean> {
+/**
+ * Guards a triage page: maintainers and guests may read. Call it at the top of every triage page; the layout is not
+ * enough because layouts don't re-run on client navigation. `returnTo` is where sign-in sends the visitor afterwards.
+ */
+export async function requireViewer(returnTo = '/triage'): Promise<Role> {
+    const role = await viewerOrNull();
+    if (!role) redirect(`/sign-in?next=${encodeURIComponent(safeReturnPath(returnTo))}`);
+    return role;
+}
+
+/**
+ * Guards every server action that changes data. Server actions are public POST endpoints, so this check, not the
+ * hidden buttons, is what keeps guests and strangers out.
+ */
+export async function requireMaintainer(returnTo = '/triage'): Promise<void> {
+    if ((await viewerOrNull()) !== 'maintainer') {
+        redirect(`/sign-in?next=${encodeURIComponent(safeReturnPath(returnTo))}`);
+    }
+}
+
+async function setSession(role: Role): Promise<void> {
     const { secret, password } = getAuthConfig();
-    if (!passwordMatches(candidate, password)) return false;
-    const expires = new Date(Date.now() + SESSION_MS);
-    (await cookies()).set(COOKIE, createToken(expires, secret, password), {
+    const expires = new Date(Date.now() + SESSION_MS[role]);
+    (await cookies()).set(COOKIE, createToken(role, expires, secret, password), {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
         expires,
     });
+}
+
+export async function startMaintainerSession(candidate: string): Promise<boolean> {
+    if (!passwordMatches(candidate, getAuthConfig().password)) return false;
+    await setSession('maintainer');
+    return true;
+}
+
+/** Returns false when guest access is turned off for this deployment. */
+export async function startGuestSession(): Promise<boolean> {
+    if (!getAuthConfig().guestAccess) return false;
+    await setSession('guest');
     return true;
 }
 
@@ -47,7 +77,23 @@ export async function endSession(): Promise<void> {
     (await cookies()).delete(COOKIE);
 }
 
-/** Only same-site triage paths, so `?next=` can't be used to bounce a maintainer to another site. */
+const BASE = 'http://bugreporter.invalid';
+
+/**
+ * Only same-site triage paths, so `?next=` can't send anyone to another site. The value is resolved first, because
+ * a path like `/triage/..//evil.example` passes a prefix check and then normalises to the protocol-relative
+ * `//evil.example`.
+ */
 export function safeReturnPath(value: unknown): string {
-    return typeof value === 'string' && /^\/triage(?:[/?]|$)/.test(value) ? value : '/triage';
+    if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//') || value.includes('\\')) {
+        return '/triage';
+    }
+    let url: URL;
+    try {
+        url = new URL(value, BASE);
+    } catch {
+        return '/triage';
+    }
+    const inTriage = url.pathname === '/triage' || url.pathname.startsWith('/triage/');
+    return url.origin === BASE && inTriage ? url.pathname + url.search : '/triage';
 }

@@ -1,6 +1,7 @@
 'use server';
 
 import { ConfigError } from '@/lib/env';
+import { isLimited, LIMITS, record } from '@/lib/rate-limit';
 import { createReport } from './repository';
 import { FORM_FIELDS, HONEYPOT_FIELD, type FormValues, type SubmitState } from './submit-state';
 import { parseNewReport } from './validation';
@@ -18,6 +19,7 @@ export async function submitReport(_previous: SubmitState, formData: FormData): 
     const values = echoValues(formData);
 
     if (formData.get(HONEYPOT_FIELD)) {
+        console.warn('Rejected a report that filled the honeypot field');
         return { status: 'failed', message: 'This report couldn’t be accepted.', values };
     }
 
@@ -25,7 +27,15 @@ export async function submitReport(_previous: SubmitState, formData: FormData): 
     if (!parsed.ok) return { status: 'invalid', errors: parsed.errors, values };
 
     try {
+        if (await isLimited('report')) {
+            return {
+                status: 'failed',
+                message: `This network has sent ${LIMITS.report.max} reports in the last hour. Please try again later.`,
+                values,
+            };
+        }
         const report = await createReport(parsed.data);
+        await record('report');
         return { status: 'received', reference: report.reference, title: report.title, severity: report.severity };
     } catch (error) {
         if (error instanceof ConfigError) {

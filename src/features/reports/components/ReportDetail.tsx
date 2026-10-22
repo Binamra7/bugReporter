@@ -7,7 +7,7 @@ import { SeverityScale } from './SeverityScale';
 import { StatusControl } from './StatusControl';
 import styles from './ReportDetail.module.css';
 
-export function ReportDetail({ report }: { report: Report }) {
+export function ReportDetail({ report, canEdit }: { report: Report; canEdit: boolean }) {
     return (
         <article className={styles.detail} aria-labelledby="report-title">
             <header className={styles.header}>
@@ -77,10 +77,16 @@ export function ReportDetail({ report }: { report: Report }) {
                         </dd>
                     </dl>
 
-                    <div className={styles.actions}>
-                        <StatusControl id={report.id} status={report.status} />
-                        <DeleteReport id={report.id} reference={report.reference} title={report.title} />
-                    </div>
+                    {canEdit ? (
+                        <div className={styles.actions}>
+                            <StatusControl id={report.id} status={report.status} />
+                            <DeleteReport id={report.id} reference={report.reference} title={report.title} />
+                        </div>
+                    ) : (
+                        <p className={styles.guestNote}>
+                            You’re browsing as a guest, so resolving and deleting are turned off.
+                        </p>
+                    )}
                 </aside>
             </div>
         </article>

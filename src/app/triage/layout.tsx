@@ -2,9 +2,12 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { Wordmark } from '@/components/Wordmark';
 import { signOut } from '@/features/auth/actions';
+import { getViewer } from '@/lib/auth/session';
 import styles from './triage.module.css';
 
-export default function TriageLayout({ children }: { children: ReactNode }) {
+export default async function TriageLayout({ children }: { children: ReactNode }) {
+    // Display only; every page and action checks access itself.
+    const viewer = await getViewer().catch(() => null);
     return (
         <>
             <header className={styles.band}>
@@ -13,9 +16,10 @@ export default function TriageLayout({ children }: { children: ReactNode }) {
                     <nav aria-label="Triage" className={styles.nav}>
                         <Link href="/triage">Queue</Link>
                         <Link href="/">Report form</Link>
+                        {viewer === 'guest' && <span className={styles.role}>Guest, read-only</span>}
                         <form action={signOut}>
                             <button type="submit" className="text-button">
-                                Sign out
+                                {viewer === 'guest' ? 'Leave' : 'Sign out'}
                             </button>
                         </form>
                     </nav>

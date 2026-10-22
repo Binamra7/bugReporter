@@ -6,29 +6,36 @@ const now = new Date('2026-10-22T12:00:00Z');
 const later = new Date('2026-10-23T12:00:00Z');
 
 describe('session tokens', () => {
-    it('verifies a token it signed until it expires', () => {
-        const token = createToken(later, secret, password);
-        expect(verifyToken(token, secret, password, now)).toBe(true);
-        expect(verifyToken(token, secret, password, later)).toBe(false);
+    it.each(['maintainer', 'guest'] as const)('returns the %s role until the token expires', role => {
+        const token = createToken(role, later, secret, password);
+        expect(verifyToken(token, secret, password, now)).toBe(role);
+        expect(verifyToken(token, secret, password, later)).toBeNull();
     });
 
     it('rejects a token signed with another secret', () => {
-        expect(verifyToken(createToken(later, 'x'.repeat(32), password), secret, password, now)).toBe(false);
+        expect(
+            verifyToken(createToken('maintainer', later, 'x'.repeat(32), password), secret, password, now)
+        ).toBeNull();
     });
 
     it('rejects every token once the password changes', () => {
-        expect(verifyToken(createToken(later, secret, password), secret, 'new password', now)).toBe(false);
+        expect(verifyToken(createToken('maintainer', later, secret, password), secret, 'new password', now)).toBeNull();
     });
 
-    it('rejects a token whose expiry was edited', () => {
-        const [version, , sig] = createToken(later, secret, password).split('.');
-        const extended = `${version}.${later.getTime() + 86_400_000}.${sig}`;
-        expect(verifyToken(extended, secret, password, now)).toBe(false);
+    it('rejects a token whose expiry or role was edited', () => {
+        const [version, role, , sig] = createToken('guest', later, secret, password).split('.');
+        expect(
+            verifyToken(`${version}.${role}.${later.getTime() + 86_400_000}.${sig}`, secret, password, now)
+        ).toBeNull();
+        expect(verifyToken(`${version}.maintainer.${later.getTime()}.${sig}`, secret, password, now)).toBeNull();
     });
 
-    it.each(['', 'v1', 'v1.abc.sig', 'v2.1.sig', 'v1.1.sig.extra'])('rejects malformed token %j', token => {
-        expect(verifyToken(token, secret, password, now)).toBe(false);
-    });
+    it.each(['', 'v2', 'v2.admin.1.sig', 'v2.guest.abc.sig', 'v1.1.sig', 'v2.guest.1.sig.extra'])(
+        'rejects malformed token %j',
+        token => {
+            expect(verifyToken(token, secret, password, now)).toBeNull();
+        }
+    );
 });
 
 describe('passwordMatches', () => {

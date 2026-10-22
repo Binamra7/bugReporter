@@ -4,19 +4,20 @@ import { notFound } from 'next/navigation';
 import { ConfigNotice } from '@/components/ConfigNotice';
 import { ArrowLeftIcon } from '@/components/icons';
 import { ReportDetail } from '@/features/reports/components/ReportDetail';
+import { referenceFor } from '@/features/reports/model';
 import { parseQueueQuery, queueHref } from '@/features/reports/queue';
 import { getReport } from '@/features/reports/repository';
-import { requireMaintainer } from '@/lib/auth/session';
+import { requireViewer } from '@/lib/auth/session';
 import { ConfigError } from '@/lib/env';
 
 export async function generateMetadata({ params }: PageProps<'/triage/[id]'>): Promise<Metadata> {
     const { id } = await params;
-    return { title: `Report ${id.slice(-6).toUpperCase()}` };
+    return { title: `Report ${referenceFor(id)}` };
 }
 
 export default async function ReportPage({ params }: PageProps<'/triage/[id]'>) {
     const { id } = await params;
-    await requireMaintainer(`/triage/${id}`);
+    const viewer = await requireViewer(`/triage/${id}`);
 
     let report;
     try {
@@ -33,7 +34,7 @@ export default async function ReportPage({ params }: PageProps<'/triage/[id]'>) 
             <Link href={queueHref(backTo)} className="back-link">
                 <ArrowLeftIcon /> {report.status === 'open' ? 'Open' : 'Resolved'} reports
             </Link>
-            <ReportDetail report={report} />
+            <ReportDetail report={report} canEdit={viewer === 'maintainer'} />
         </>
     );
 }

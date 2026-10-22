@@ -11,6 +11,7 @@ export const E2E_ENV = {
     MONGODB_DB: 'bug-reporter-e2e',
     ADMIN_PASSWORD: 'e2e-maintainer-password',
     SESSION_SECRET: 'e2e-session-secret-at-least-32-characters-long',
+    GUEST_ACCESS: 'on',
 };
 
 export default defineConfig({

@@ -26,9 +26,16 @@ export function getDatabaseConfig() {
     };
 }
 
+export const MIN_PASSWORD_LENGTH = 12;
+
 export function getAuthConfig() {
     const password = required('ADMIN_PASSWORD');
     const secret = required('SESSION_SECRET');
+    if (password.length < MIN_PASSWORD_LENGTH) {
+        throw new ConfigError('ADMIN_PASSWORD', `ADMIN_PASSWORD must be at least ${MIN_PASSWORD_LENGTH} characters.`);
+    }
     if (secret.length < 32) throw new ConfigError('SESSION_SECRET', 'SESSION_SECRET must be at least 32 characters.');
-    return { password, secret };
+    // Opt-in read-only access to triage, for public demos. Off unless explicitly "on".
+    const guestAccess = process.env.GUEST_ACCESS?.trim().toLowerCase() === 'on';
+    return { password, secret, guestAccess };
 }

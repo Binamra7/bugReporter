@@ -4,18 +4,21 @@ import { redirect } from 'next/navigation';
 import { ConfigNotice } from '@/components/ConfigNotice';
 import { ArrowLeftIcon } from '@/components/icons';
 import { FieldFooter, FieldIntro, SplitPage } from '@/components/SplitPage';
+import { GuestEntry } from '@/features/auth/GuestEntry';
 import { SignInForm } from '@/features/auth/SignInForm';
-import { isMaintainer, safeReturnPath } from '@/lib/auth/session';
-import { ConfigError } from '@/lib/env';
+import { getViewer, safeReturnPath } from '@/lib/auth/session';
+import { ConfigError, getAuthConfig } from '@/lib/env';
 
-export const metadata: Metadata = { title: 'Maintainer sign-in' };
+export const metadata: Metadata = { title: 'Sign in' };
 
 export default async function SignInPage({ searchParams }: PageProps<'/sign-in'>) {
     const returnTo = safeReturnPath((await searchParams).next);
 
     let configError: ConfigError | null = null;
+    let guestAccess = false;
     try {
-        if (await isMaintainer()) redirect(returnTo);
+        if (await getViewer()) redirect(returnTo);
+        guestAccess = getAuthConfig().guestAccess;
     } catch (error) {
         if (!(error instanceof ConfigError)) throw error;
         configError = error;
@@ -41,7 +44,10 @@ export default async function SignInPage({ searchParams }: PageProps<'/sign-in'>
             {configError ? (
                 <ConfigNotice error={configError} area="Maintainer sign-in" />
             ) : (
-                <SignInForm returnTo={returnTo} />
+                <>
+                    <SignInForm returnTo={returnTo} />
+                    {guestAccess && <GuestEntry returnTo={returnTo} />}
+                </>
             )}
         </SplitPage>
     );

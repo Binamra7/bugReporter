@@ -5,7 +5,7 @@ import { signIn, type SignInState } from './actions';
 import styles from './SignInForm.module.css';
 
 export function SignInForm({ returnTo }: { returnTo: string }) {
-    const [state, formAction, pending] = useActionState<SignInState, FormData>(signIn, { error: null });
+    const [state, formAction, pending] = useActionState<SignInState, FormData>(signIn, { error: null, attempt: 0 });
 
     return (
         <form
@@ -33,7 +33,7 @@ export function SignInForm({ returnTo }: { returnTo: string }) {
                     aria-describedby={state.error ? 'password-error' : undefined}
                 />
                 {state.error && (
-                    <p id="password-error" className="field-error" role="alert">
+                    <p key={state.attempt} id="password-error" className="field-error" role="alert">
                         {state.error}
                     </p>
                 )}
