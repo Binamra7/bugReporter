@@ -8,11 +8,14 @@ import { getDatabaseConfig } from './env';
 const globalForMongo = globalThis as typeof globalThis & { mongoClient?: Promise<MongoClient> };
 
 function connect(uri: string): Promise<MongoClient> {
-    const client = new MongoClient(uri, { serverSelectionTimeoutMS: 5000 });
+    // Many Fluid instances can run at once, each with its own pool; keep pools small so a shared Atlas tier
+    // (M0 allows 500 connections) isn't exhausted, and let idle connections go quickly.
+    const client = new MongoClient(uri, { serverSelectionTimeoutMS: 5000, maxPoolSize: 10, maxIdleTimeMS: 10_000 });
     // Lets Vercel keep the function alive long enough to close idle connections; a no-op elsewhere.
     attachDatabasePool(client);
-    return client.connect().catch((error: unknown) => {
+    return client.connect().catch(async (error: unknown) => {
         globalForMongo.mongoClient = undefined;
+        await client.close().catch(() => {});
         throw error;
     });
 }

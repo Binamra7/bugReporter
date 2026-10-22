@@ -42,12 +42,17 @@ export function isHttpUrl(value: string): boolean {
     }
 }
 
+function normaliseNewlines(value: FormDataEntryValue): FormDataEntryValue {
+    return typeof value === 'string' ? value.replace(/\r\n?/g, '\n') : value;
+}
+
 export type ParseResult = { ok: true; data: NewReport } | { ok: false; errors: FieldErrors };
 
 export function parseNewReport(formData: FormData): ParseResult {
     const result = newReportSchema.safeParse({
         title: formData.get('title') ?? '',
-        description: formData.get('description') ?? '',
+        // Form encoding sends textarea newlines as CRLF, which would count twice against the browser's own maxLength.
+        description: normaliseNewlines(formData.get('description') ?? ''),
         severity: formData.get('severity') ?? undefined,
         pageUrl: formData.get('pageUrl') ?? '',
         version: formData.get('version') ?? '',

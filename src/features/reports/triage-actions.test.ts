@@ -1,3 +1,4 @@
+import * as actions from './triage-actions';
 import { changeStatus, removeReport } from './triage-actions';
 import { deleteReport, setReportStatus } from './repository';
 import { requireMaintainer } from '@/lib/auth/session';
@@ -12,7 +13,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 const id = '6ad98c8948046d09951e23bb';
-const idle = { tone: 'idle', message: '' } as const;
+const idle = { tone: 'idle', message: '', attempt: 0 } as const;
 
 function form(fields: Record<string, string>) {
     const data = new FormData();
@@ -23,22 +24,24 @@ function form(fields: Record<string, string>) {
 beforeEach(() => vi.clearAllMocks());
 
 describe('triage actions', () => {
-    it('never touches data when the caller is not a maintainer', async () => {
-        vi.mocked(requireMaintainer)
-            .mockRejectedValueOnce(new Error('redirect:/sign-in'))
-            .mockRejectedValueOnce(new Error('redirect:/sign-in'));
-
-        await expect(changeStatus(idle, form({ id, status: 'resolved' }))).rejects.toThrow('redirect:/sign-in');
-        await expect(removeReport(idle, form({ id }))).rejects.toThrow('redirect:/sign-in');
-        expect(setReportStatus).not.toHaveBeenCalled();
-        expect(deleteReport).not.toHaveBeenCalled();
-    });
+    // Loops over every export, so a new action that forgets requireMaintainer() fails here.
+    it.each(Object.entries(actions).filter(([, value]) => typeof value === 'function'))(
+        '%s never touches data when the caller is not a maintainer',
+        async (_name, action) => {
+            vi.mocked(requireMaintainer).mockRejectedValueOnce(new Error('redirect:/sign-in'));
+            const run = action as (state: typeof idle, data: FormData) => Promise<unknown>;
+            await expect(run(idle, form({ id, status: 'resolved' }))).rejects.toThrow('redirect:/sign-in');
+            expect(setReportStatus).not.toHaveBeenCalled();
+            expect(deleteReport).not.toHaveBeenCalled();
+        }
+    );
 
     it('resolves a report and confirms it', async () => {
         vi.mocked(setReportStatus).mockResolvedValue(true);
         await expect(changeStatus(idle, form({ id, status: 'resolved' }))).resolves.toEqual({
             tone: 'success',
             message: 'Marked resolved.',
+            attempt: 1,
         });
         expect(setReportStatus).toHaveBeenCalledWith(id, 'resolved');
     });

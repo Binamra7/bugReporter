@@ -11,6 +11,7 @@ export function DeleteReport({ id, reference, title }: { id: string; reference: 
     const [state, formAction, pending] = useActionState<TriageActionState, FormData>(removeReport, {
         tone: 'idle',
         message: '',
+        attempt: 0,
     });
 
     function open() {
@@ -39,7 +40,7 @@ export function DeleteReport({ id, reference, title }: { id: string; reference: 
                         open queue but keep a record, mark it resolved instead.
                     </p>
                     {state.tone === 'error' && (
-                        <p className="field-error" role="alert">
+                        <p key={state.attempt} className="field-error" role="alert">
                             {state.message}
                         </p>
                     )}

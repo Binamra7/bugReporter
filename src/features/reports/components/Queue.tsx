@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { Timestamp } from '@/components/Timestamp';
-import { SEVERITIES, SEVERITY, type Report, type ReportStatus } from '../model';
+import { SEVERITIES, SEVERITY, type QueueItem, type ReportStatus } from '../model';
 import { hasFilters, QUEUE_LIMIT, queueHref, SEARCH_MAX, SORTS, SORTS_FOR, type QueueQuery } from '../queue';
+import { FocusOnArrival } from './FocusOnArrival';
 import { SeverityScale } from './SeverityScale';
 import styles from './Queue.module.css';
 
@@ -16,24 +17,25 @@ function plural(count: number, status: ReportStatus) {
 
 interface QueueProps {
     query: QueueQuery;
-    reports: Report[];
+    reports: QueueItem[];
+    matched: number;
     counts: Record<ReportStatus, number>;
-    truncated: boolean;
     deleted: string | null;
 }
 
-export function Queue({ query, reports, counts, truncated, deleted }: QueueProps) {
+export function Queue({ query, reports, matched, counts, deleted }: QueueProps) {
     const total = counts[query.status];
     const filtered = hasFilters(query);
 
     return (
         <div className={styles.queue}>
             {deleted && (
-                <div className="notice" role="status">
+                // After a delete the dialog that held focus is gone; land on the confirmation instead of <body>.
+                <FocusOnArrival className="notice">
                     <p>
                         Deleted <span className="mono">{deleted}</span>.
                     </p>
-                </div>
+                </FocusOnArrival>
             )}
 
             <h1 className={styles.title}>
@@ -58,7 +60,7 @@ export function Queue({ query, reports, counts, truncated, deleted }: QueueProps
 
             {filtered && (
                 <p className={styles.summary}>
-                    {reports.length} of {total} {plural(total, query.status)} match
+                    {matched} of {total} {plural(total, query.status)} match
                     {query.q && (
                         <>
                             {' '}
@@ -79,9 +81,10 @@ export function Queue({ query, reports, counts, truncated, deleted }: QueueProps
                 <EmptyState query={query} filtered={filtered} />
             )}
 
-            {truncated && (
+            {matched > reports.length && (
                 <p className={styles.summary}>
-                    Showing the first {QUEUE_LIMIT}. Narrow the list with search or a severity filter to see the rest.
+                    Showing the first {QUEUE_LIMIT} of {matched}. Narrow the list with search or a severity filter to
+                    see the rest.
                 </p>
             )}
         </div>
@@ -145,7 +148,7 @@ function Filters({ query }: { query: QueueQuery }) {
     );
 }
 
-function QueueRow({ report }: { report: Report }) {
+function QueueRow({ report }: { report: QueueItem }) {
     return (
         <li className={styles.row}>
             <div className={styles.severity}>
@@ -155,7 +158,7 @@ function QueueRow({ report }: { report: Report }) {
                 <Link href={`/triage/${report.id}`} className={styles.rowTitle}>
                     {report.title}
                 </Link>
-                <p className={styles.excerpt}>{report.description}</p>
+                <p className={styles.excerpt}>{report.excerpt}</p>
             </div>
             <p className={styles.meta}>
                 <span className="mono">{report.reference}</span>

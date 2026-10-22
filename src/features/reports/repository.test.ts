@@ -2,7 +2,15 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { MongoClient, ObjectId } from 'mongodb';
 import { closeDb } from '@/lib/db';
 import { parseQueueQuery } from './queue';
-import { countByStatus, createReport, deleteReport, getReport, listReports, setReportStatus } from './repository';
+import {
+    countByStatus,
+    createReport,
+    deleteReport,
+    EXCERPT_LENGTH,
+    getReport,
+    listReports,
+    setReportStatus,
+} from './repository';
 import type { NewReport } from './validation';
 
 let server: MongoMemoryServer;
@@ -146,5 +154,63 @@ describe('reports repository', () => {
 
         const resolved = await listReports(parseQueueQuery({ status: 'resolved' }));
         expect(resolved.reports[0]).toMatchObject({ title: 'Legacy resolved', resolvedAt: updatedAt, pageUrl: null });
+    });
+
+    it('counts every match even when only some rows are returned', async () => {
+        await seed({ title: 'Login A' }, { title: 'Login B' }, { title: 'Other' });
+        const { reports, matched } = await listReports(parseQueueQuery({ q: 'login' }));
+        expect(matched).toBe(2);
+        expect(reports).toHaveLength(2);
+    });
+
+    it('returns a short excerpt instead of the full description', async () => {
+        await seed(
+            { title: 'Long', description: 'word '.repeat(400) },
+            { title: 'Short', description: 'Just a few words.' }
+        );
+        const { reports } = await listReports(parseQueueQuery({}));
+        const long = reports.find(r => r.title === 'Long')!;
+        expect(long.excerpt.endsWith('…')).toBe(true);
+        expect(long.excerpt.length).toBeLessThanOrEqual(EXCERPT_LENGTH + 1);
+        expect(reports.find(r => r.title === 'Short')!.excerpt).toBe('Just a few words.');
+        expect(long).not.toHaveProperty('description');
+    });
+
+    it('keeps the first resolution date when a stale tab resolves again', async () => {
+        const [report] = await seed({});
+        await setReportStatus(report!.id, 'resolved');
+        const first = (await getReport(report!.id))!.resolvedAt;
+        await new Promise(resolve => setTimeout(resolve, 5));
+        expect(await setReportStatus(report!.id, 'resolved')).toBe(true);
+        expect((await getReport(report!.id))!.resolvedAt).toEqual(first);
+    });
+
+    it('leaves documents with an unknown severity out of both rows and counts', async () => {
+        await seed({ title: 'Valid' });
+        const now = new Date();
+        await raw.db('bug-reporter-test').collection('bugs').insertOne({
+            bugTitle: 'Odd',
+            bugDescription: 'x',
+            bugSeverity: 'critical',
+            createdAt: now,
+            updatedAt: now,
+        });
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const { reports, matched } = await listReports(parseQueueQuery({}));
+        expect(reports.map(r => r.title)).toEqual(['Valid']);
+        expect(matched).toBe(1);
+        expect(await countByStatus()).toEqual({ open: 1, resolved: 0 });
+    });
+
+    it('falls back to the id time when a legacy document has no usable dates', async () => {
+        const _id = new ObjectId();
+        await raw
+            .db('bug-reporter-test')
+            .collection('bugs')
+            .insertOne({ _id, bugTitle: 'No dates', bugDescription: 'x', bugSeverity: 'low', createdAt: 'yesterday' });
+        const report = await getReport(_id.toHexString());
+        expect(report?.createdAt).toEqual(_id.getTimestamp());
+        expect(report?.updatedAt).toEqual(_id.getTimestamp());
     });
 });

@@ -27,6 +27,9 @@ export interface Report {
     resolvedAt: Date | null;
 }
 
+/** A queue row: the report with its description cut to an excerpt. */
+export type QueueItem = Omit<Report, 'description'> & { excerpt: string };
+
 /** The short handle people quote; display only. Routes and queries use the full id. */
 export function referenceFor(id: string): string {
     return `BR-${id.slice(-6).toUpperCase()}`;

@@ -52,6 +52,12 @@ describe('parseNewReport', () => {
         expect(result.ok && result.data.pageUrl).toBe('https://app.example.com/invoices?page=2');
     });
 
+    it('counts a line break once, as the browser does', () => {
+        const lines = Array.from({ length: 20 }, () => 'x'.repeat(LIMITS.description / 20 - 1)).join('\r\n');
+        const result = parseNewReport(form({ ...valid, description: lines }));
+        expect(result.ok && result.data.description).toBe(lines.replaceAll('\r\n', '\n'));
+    });
+
     it('enforces length limits', () => {
         const result = parseNewReport(
             form({ ...valid, title: 'x'.repeat(LIMITS.title + 1), description: 'y'.repeat(LIMITS.description + 1) })

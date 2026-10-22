@@ -9,6 +9,7 @@ export function StatusControl({ id, status }: { id: string; status: ReportStatus
     const [state, formAction, pending] = useActionState<TriageActionState, FormData>(changeStatus, {
         tone: 'idle',
         message: '',
+        attempt: 0,
     });
     const next: ReportStatus = status === 'open' ? 'resolved' : 'open';
 
@@ -24,8 +25,9 @@ export function StatusControl({ id, status }: { id: string; status: ReportStatus
             >
                 {pending ? 'Saving…' : next === 'resolved' ? 'Mark resolved' : 'Reopen'}
             </button>
+            {/* The live region stays mounted; replacing its child makes a repeated message announce again. */}
             <p role="status" className={styles.feedback} data-tone={state.tone}>
-                {state.message}
+                <span key={state.attempt}>{state.message}</span>
             </p>
         </form>
     );

@@ -9,7 +9,7 @@ export default function AppError({ reset }: { error: Error & { digest?: string }
                 <FieldIntro
                     id="error-heading"
                     title="Something broke."
-                    lead="This page hit an error on our side. Nothing you entered has been sent."
+                    lead="This page hit an error on our side. Try again in a moment."
                 />
             }
         >
