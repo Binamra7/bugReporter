@@ -33,7 +33,7 @@ export type NewReport = z.infer<typeof newReportSchema>;
 export type NewReportField = keyof NewReport;
 export type FieldErrors = Partial<Record<NewReportField, string>>;
 
-function isHttpUrl(value: string): boolean {
+export function isHttpUrl(value: string): boolean {
     try {
         const url = new URL(value);
         return url.protocol === 'http:' || url.protocol === 'https:';

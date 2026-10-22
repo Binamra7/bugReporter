@@ -72,9 +72,8 @@ button {
     outline-offset: 2px;
 }
 
-/* Not on body: this face's tabular set also widens the period and comma. */
-.numeric,
-time {
+/* Counts only: this face's tabular set also widens the period, comma and colon, which breaks dates and prose. */
+.numeric {
     font-variant-numeric: tabular-nums;
 }
 
@@ -279,4 +278,12 @@ select.input {
         transition-duration: 0s !important;
         animation-duration: 0s !important;
     }
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-bottom: var(--s-5);
+    font-weight: 600;
 }

@@ -39,7 +39,7 @@ Rules (`--rule`, `--rule-strong`) and the empty severity cell are mixed from ink
     - Headings: weight 700, sentence case.
     - Body: 400 at 17px, measure ≤70ch.
 - **JetBrains Mono** (variable) only for machine values: report references (`BR-3F9A1C`), URLs and version strings.
-- Tabular numerals only where numbers line up (`time`, `.numeric`), never on body text: Schibsted's tabular set also widens the period and comma.
+- Tabular numerals only on bare counts (`.numeric`), never on prose or dates: Schibsted's tabular set also widens the period, comma and colon.
 - **Nothing renders below 15px.** The small end is 15 / 16 / 17px. Labels are sentence case. No tracked uppercase eyebrows, no section numbers.
 
 ## Grid and space

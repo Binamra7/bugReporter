@@ -1,0 +1,159 @@
+.detail {
+    display: grid;
+    gap: var(--s-6);
+}
+
+.header {
+    display: grid;
+    gap: var(--s-2);
+}
+
+.reference {
+    color: var(--ink-2);
+    font-size: var(--fs-17);
+}
+
+.title {
+    max-width: 30ch;
+    font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    overflow-wrap: anywhere;
+}
+
+.columns {
+    display: grid;
+    gap: var(--s-7);
+}
+
+@media (min-width: 60rem) {
+    .columns {
+        grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+        gap: var(--s-8);
+        align-items: start;
+    }
+}
+
+.sectionHeading {
+    padding-top: var(--s-3);
+    border-top: var(--rule-w) solid var(--ink);
+    font-size: var(--fs-20);
+}
+
+.description {
+    display: grid;
+    gap: var(--s-4);
+}
+
+.descriptionText {
+    max-width: var(--measure);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.aside {
+    display: grid;
+    gap: var(--s-4);
+}
+
+.facts {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+}
+
+.facts dt,
+.facts dd {
+    padding: var(--s-2) 0;
+    border-bottom: 1px solid var(--rule);
+}
+
+.facts dt {
+    padding-right: var(--s-5);
+    color: var(--ink-2);
+}
+
+.facts dd {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.status {
+    font-weight: 700;
+}
+
+.status[data-status='resolved'] {
+    color: var(--resolved);
+}
+
+.url {
+    display: inline;
+}
+
+.url svg {
+    margin-left: var(--s-1);
+    vertical-align: -0.1em;
+}
+
+.none {
+    color: var(--ink-2);
+}
+
+.actions {
+    display: grid;
+    gap: var(--s-3);
+    justify-items: start;
+    padding-top: var(--s-3);
+}
+
+.control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-2) var(--s-4);
+}
+
+.feedback {
+    font-weight: 600;
+}
+
+.feedback[data-tone='success'] {
+    color: var(--resolved);
+}
+
+.feedback[data-tone='error'] {
+    color: var(--high);
+}
+
+.dialog {
+    /* The global margin reset removes the UA's centring of modal dialogs. */
+    margin: auto;
+    width: min(32rem, calc(100vw - 2 * var(--s-4)));
+    padding: var(--s-6);
+    border: 0;
+    border-top: 6px solid var(--high);
+    border-radius: 0;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 0 1.5rem 3rem -1rem color-mix(in srgb, var(--ink) 45%, transparent);
+}
+
+.dialog form {
+    display: grid;
+    gap: var(--s-4);
+}
+
+.dialog::backdrop {
+    background: color-mix(in srgb, var(--ink) 55%, transparent);
+}
+
+.dialogHeading {
+    font-size: var(--fs-24);
+}
+
+.dialogActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    padding-top: var(--s-2);
+}
