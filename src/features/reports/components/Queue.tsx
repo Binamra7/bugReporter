@@ -53,7 +53,8 @@ export function Queue({ query, reports, counts, truncated, deleted }: QueueProps
                 ))}
             </nav>
 
-            <Filters query={query} />
+            {/* Uncontrolled inputs keep stale values across client navigations; remount when the view changes. */}
+            <Filters key={queueHref(query)} query={query} />
 
             {filtered && (
                 <p className={styles.summary}>
