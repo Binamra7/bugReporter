@@ -11,7 +11,6 @@
     --resolved: #14532d;
 
     --rule: color-mix(in srgb, var(--ink) 18%, var(--paper));
-    --rule-strong: var(--ink);
     --cell-empty: color-mix(in srgb, var(--ink) 16%, var(--paper));
     --hover-wash: color-mix(in srgb, var(--ink) 5%, var(--paper));
     --high-wash: color-mix(in srgb, var(--high) 8%, var(--paper));
@@ -19,7 +18,6 @@
     --font-sans: 'Schibsted Grotesk Variable', 'Helvetica Neue', Arial, sans-serif;
     --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
-    --fs-15: 0.9375rem;
     --fs-16: 1rem;
     --fs-17: 1.0625rem;
     --fs-20: 1.25rem;

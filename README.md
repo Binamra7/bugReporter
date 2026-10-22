@@ -143,7 +143,7 @@ Architecture, data model and trade-offs: [docs/architecture.md](docs/architectur
 ## Design
 
 - **World:** a factory defect tag. A signal-orange field carries the identity; work happens on off-white paper in black ink.
-- **Type:** Schibsted Grotesk for everything, JetBrains Mono only for references, URLs and versions. Nothing below 15px.
+- **Type:** Schibsted Grotesk for everything, JetBrains Mono only for references, URLs and versions. Nothing below 16px.
 - **Signature:** the three-cell severity scale, identical on the form, in the queue and on the report.
 - **Contrast:** primary ink ≥8:1 and secondary ink ≥7:1, verified numerically. See [DESIGN.md](DESIGN.md) and [`tokens.css`](src/app/tokens.css).
 

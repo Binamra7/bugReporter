@@ -42,11 +42,3 @@ export function ExternalIcon() {
         </Icon>
     );
 }
-
-export function CheckIcon() {
-    return (
-        <Icon>
-            <path d="M4 10.5l4 4 8-9" />
-        </Icon>
-    );
-}

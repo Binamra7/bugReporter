@@ -30,7 +30,7 @@ The reporter is someone who just hit a problem, often on a laptop in daylight, s
 | `--high`      | `#A3140B` | high severity, errors, delete     | 7.1 on paper  |
 | `--resolved`  | `#14532D` | resolved status                   | 8.2 on paper  |
 
-Rules (`--rule`, `--rule-strong`) and the empty severity cell are mixed from ink and paper with `color-mix()`; never hard-code them. The field can't hold two inks at 7:1, so never put `--ink-2`, `--high` or `--resolved` on it.
+Rules (`--rule`), hover washes and the empty severity cell are mixed from ink and paper with `color-mix()`; never hard-code them. The field can't hold two inks at 7:1, so never put `--ink-2`, `--high` or `--resolved` on it.
 
 ## Type
 
@@ -40,7 +40,7 @@ Rules (`--rule`, `--rule-strong`) and the empty severity cell are mixed from ink
     - Body: 400 at 17px, measure ≤70ch.
 - **JetBrains Mono** (variable) only for machine values: report references (`BR-3F9A1C`), URLs and version strings.
 - Tabular numerals only on bare counts (`.numeric`), never on prose or dates: Schibsted's tabular set also widens the period, comma and colon.
-- **Nothing renders below 15px.** The small end is 15 / 16 / 17px. Labels are sentence case. No tracked uppercase eyebrows, no section numbers.
+- **Nothing renders below 16px.** The small end is 16 / 17px. Labels are sentence case. No tracked uppercase eyebrows, no section numbers.
 
 ## Grid and space
 

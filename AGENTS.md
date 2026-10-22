@@ -28,7 +28,7 @@ npm run build                  # production build; needs no env vars
 - **Read configuration per request** through `src/lib/env.ts`, never at module load, so builds work without secrets. Missing config surfaces as `ConfigError` and is shown to the maintainer, not swallowed.
 - **Don't add `loading.tsx` under `/triage`.** Streaming starts before the auth check and `notFound()`, so their 307/404 responses become client-side redirects.
 - **Modules that touch the database or secrets import `server-only`.**
-- **UI:** colours only from the tokens in `src/app/tokens.css` (values in `DESIGN.md`); nothing below 15px; orange field surfaces carry only `--field-ink`; severity is always shown with `<SeverityScale>`; no cards, gradients or eyebrow labels.
+- **UI:** colours only from the tokens in `src/app/tokens.css` (values in `DESIGN.md`); nothing below 16px; orange field surfaces carry only `--field-ink`; severity is always shown with `<SeverityScale>`; no cards, gradients or eyebrow labels.
 - **Never fake data or integrations.** If something can't work (no storage for attachments, no email), leave it out and note it in the architecture limitations.
 
 ## Conventions
