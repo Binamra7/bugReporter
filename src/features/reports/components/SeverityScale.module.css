@@ -1,0 +1,29 @@
+.scale {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    white-space: nowrap;
+}
+
+.cells {
+    display: inline-flex;
+    gap: 3px;
+}
+
+.cell {
+    width: 0.7rem;
+    height: 0.7rem;
+    background: var(--cell-empty);
+}
+
+.cell[data-filled='true'] {
+    background: currentColor;
+}
+
+.word {
+    font-weight: 600;
+}
+
+.scale[data-severity='high'] {
+    color: var(--high);
+}
