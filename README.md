@@ -85,6 +85,7 @@ Prerequisites: Node.js 20.9+ and Docker (or any MongoDB URI).
 npm install
 cp .env.example .env.local
 npm run db:up
+npm run db:seed   # optional sample reports
 npm run dev
 ```
 

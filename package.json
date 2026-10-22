@@ -15,6 +15,7 @@
         "format:check": "prettier --check .",
         "check": "npm run format:check && npm run lint && npm run typecheck && npm test",
         "db:up": "docker run -d --name bug-reporter-mongo -p 27017:27017 mongo:8",
+        "db:seed": "node --env-file-if-exists=.env.local scripts/seed.ts",
         "db:down": "docker rm -f bug-reporter-mongo"
     },
     "engines": {

@@ -10,6 +10,7 @@ A public bug report form (`/`) and a password-protected triage queue (`/triage`)
 
 ```bash
 npm run db:up && npm run dev   # local MongoDB in Docker + dev server (needs .env.local, see .env.example)
+npm run db:seed                # sample reports; replaces only documents tagged seed: true
 npm run check                  # format check, lint, typecheck, tests: run before every commit
 npm run build                  # production build; needs no env vars
 ```

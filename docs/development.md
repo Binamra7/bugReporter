@@ -11,10 +11,13 @@
 npm install
 cp .env.example .env.local      # then fill in ADMIN_PASSWORD and SESSION_SECRET
 npm run db:up                   # mongo:8 in Docker on localhost:27017
+npm run db:seed                 # optional: 46 sample reports
 npm run dev                     # http://localhost:3000
 ```
 
 Generate a session secret with `openssl rand -base64 32`. The triage queue is at `/triage`; sign in with `ADMIN_PASSWORD`.
+
+`npm run db:seed` loads 46 sample reports for a fictional invoicing app (31 open, 15 resolved, three in the legacy Express shape) with dates relative to today. Sample documents are tagged `seed: true`, so rerunning replaces only them and real reports are never touched. It refuses non-local databases unless `SEED_ALLOW_REMOTE=1` is set, and needs Node 22.18+ because it runs the TypeScript file directly.
 
 `npm run db:down` removes the container and its data.
 
