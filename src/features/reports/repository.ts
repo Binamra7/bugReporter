@@ -2,7 +2,7 @@ import 'server-only';
 import { ObjectId, type Collection, type Document, type Filter } from 'mongodb';
 import { getDb } from '@/lib/db';
 import { isSeverity, referenceFor, type Report, type ReportStatus } from './model';
-import type { QueueQuery } from './queue';
+import { QUEUE_LIMIT, type QueueQuery } from './queue';
 import type { NewReport } from './validation';
 
 /**
@@ -21,8 +21,6 @@ interface BugDocument {
     pageUrl?: string | null;
     version?: string | null;
 }
-
-export const QUEUE_LIMIT = 200;
 
 async function bugs(): Promise<Collection<BugDocument>> {
     return (await getDb()).collection<BugDocument>('bugs');

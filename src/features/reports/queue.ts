@@ -18,6 +18,9 @@ const DEFAULT_SORT: Record<ReportStatus, Sort> = { open: 'severity', resolved: '
 
 export const SEARCH_MAX = 100;
 
+/** Upper bound on rows rendered at once; the queue says so when a filter would show more. */
+export const QUEUE_LIMIT = 200;
+
 export interface QueueQuery {
     status: ReportStatus;
     severity: Severity | null;
