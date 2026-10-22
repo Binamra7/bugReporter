@@ -110,6 +110,7 @@ Open http://localhost:3000 to report and http://localhost:3000/triage to triage.
 | `npm run check`   | Format check, lint, typecheck and tests |
 | `npm run build`   | Production build                        |
 | `npm run db:up`   | Start MongoDB 8 in Docker               |
+| `npm run db:seed` | Load 46 sample reports (local only)     |
 | `npm run db:down` | Remove the MongoDB container            |
 
 </details>
