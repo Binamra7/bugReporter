@@ -48,7 +48,8 @@ All four are server-only; none are prefixed `NEXT_PUBLIC_`. Missing values don't
 
 Vitest runs everything under `src/**/*.test.ts(x)`.
 
-- **Pure logic:** validation, queue params, session tokens, return paths.
+- **Pure logic:** validation, queue params, session tokens and roles, return paths, IPv6 grouping for rate limits.
+- **Access guards:** `session.test.ts` checks that guests can read but never write, and that turning guest access off ends guest sessions.
 - **Repository:** `repository.test.ts` starts a real `mongod` with `mongodb-memory-server`, including documents in the legacy Express shape. The first run downloads a MongoDB binary (~100 MB) into `~/.cache/mongodb-binaries`.
 - **Server actions:** `triage-actions.test.ts` mocks the repository and session to prove nothing is written without a maintainer session.
 - **Components:** `ReportForm.test.tsx` runs in jsdom (`// @vitest-environment jsdom`) with the server action mocked.

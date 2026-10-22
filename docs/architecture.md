@@ -63,14 +63,19 @@ Signing in sets an `httpOnly`, `SameSite=Lax` cookie holding a signed token (`v2
 
 ### Rate limits
 
-`src/lib/rate-limit.ts` keeps fixed-window counters in the `rate_limits` collection, keyed by a hash of the client address (`x-real-ip`, set by Vercel). A TTL index removes expired windows. Serverless instances share no memory, so counters can't live in the process.
+`src/lib/rate-limit.ts` keeps fixed-window counters in the `rate_limits` collection. A TTL index removes expired windows. Serverless instances share no memory, so counters can't live in the process.
 
 | Action                    | Allowance                | When exceeded                         |
 | ------------------------- | ------------------------ | ------------------------------------- |
 | Failed maintainer sign-in | 10 per 15 minutes per IP | Sign-in refuses until the window ends |
 | Report submission         | 20 per hour per IP       | The form explains and keeps the text  |
 
-If the limiter itself can't reach the database, sign-in proceeds (it doesn't need the database), and logs the error. The report form also has a honeypot field for simple bots.
+- **Atomic:** each request increments first and decides from the new count in one update, so a burst of parallel requests can't all read a count under the limit. A correct password gives its use back, so only failures count. A failed insert gives back its report use.
+- **Fails open:** limiter calls time out after 1.5 seconds, and any limiter error lets the request through (logged). A counter outage shouldn't block sign-in or reporting.
+- **Addresses:** the client address is `x-real-ip`, which Vercel sets and clients can't override. IPv6 clients are grouped by /64. Addresses are stored as an HMAC keyed with `SESSION_SECRET`, not in the clear. Off Vercel the header is client-controlled or missing; with no address, nothing is limited rather than putting every visitor in one bucket.
+- **Trade-off:** the limit is per network, so people sharing the maintainer's public IP (office NAT, a VPN exit) could lock sign-in for 15 minutes with wrong guesses.
+
+The report form also has a honeypot field for simple bots.
 
 ## Failure handling
 
@@ -94,7 +99,7 @@ There is deliberately no `loading.tsx` under `/triage`: a streaming boundary sen
 
 ## Limitations
 
-- **Rate limits are per IP address.** They slow down guessing and flooding from one network; a distributed attack needs Vercel's firewall in front.
+- **Rate limits are per IP address and only effective on Vercel.** They slow down guessing and flooding from one network; a distributed attack needs Vercel's firewall in front.
 - **No screenshots or attachments** on reports; that needs blob storage.
 - **No conversation** between reporter and maintainer, and reporters can't look up a report's status: there are no reporter accounts or contact details.
 - **One shared maintainer password.** No per-person identity or audit log.
