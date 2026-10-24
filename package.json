@@ -20,7 +20,7 @@
         "db:down": "docker rm -f bug-reporter-mongo"
     },
     "engines": {
-        "node": ">=20.9"
+        "node": ">=22.23.4"
     },
     "dependencies": {
         "@fontsource-variable/jetbrains-mono": "^5.3.0",
