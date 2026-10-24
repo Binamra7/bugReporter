@@ -10,7 +10,9 @@ export default async function globalSetup() {
     const client = await MongoClient.connect(E2E_ENV.MONGODB_URI, { serverSelectionTimeoutMS: 5000 }).catch(() => {
         throw new Error(`E2E tests need MongoDB at ${E2E_ENV.MONGODB_URI}. Start one with \`npm run db:up\`.`);
     });
-    await client.db(E2E_ENV.MONGODB_DB).dropDatabase();
+    const db = client.db(E2E_ENV.MONGODB_DB);
+    await db.dropDatabase();
+    await db.createCollection('rate_limits');
     await client.close();
     execFileSync(process.execPath, ['scripts/seed.ts'], { env: { ...process.env, ...E2E_ENV }, stdio: 'inherit' });
 }
